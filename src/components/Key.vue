@@ -26,7 +26,7 @@ export default Vue.extend({
     };
   },
   props: {
-    connection: Object,
+    connection: Function,
     cryptidAddress: {
       type: String,
       required: true,

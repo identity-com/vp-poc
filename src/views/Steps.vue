@@ -48,7 +48,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue';
-import { clusterApiUrl, Connection, Keypair } from '@solana/web3.js';
+import { Keypair } from '@solana/web3.js';
 import bs58 from 'bs58';
 import { JsonWebKey } from '@transmute/json-web-signature';
 import Cryptid from '@/components/Cryptid.vue';

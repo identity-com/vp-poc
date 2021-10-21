@@ -1,0 +1,7 @@
+name: Verifiable Presentation POC
+on: [push]
+jobs:
+  build:
+    name: Build, lint, audit and test the POC on Node ${{ matrix.node }} and ${{ matrix.os }}
+
+    runs-on: ubuntu-latest

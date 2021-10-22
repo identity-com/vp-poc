@@ -48,15 +48,12 @@
 </template>
 <script lang="ts">
 import Vue from 'vue';
-import { Keypair } from '@solana/web3.js';
-import bs58 from 'bs58';
-import { JsonWebKey } from '@transmute/json-web-signature';
 import Cryptid from '@/components/Cryptid.vue';
 import Civic from '@/components/Civic.vue';
 import Key from '@/components/Key.vue';
 import CivicExchange from '@/components/CivicExchange.vue';
 import { presentation } from '@/lib';
-import createKey from '@/lib/keyUtil';
+import { createJwkFromBs58 } from '@/lib/keyUtil';
 
 const storage: any = {};
 
@@ -69,7 +66,7 @@ export default Vue.extend({
   },
   data(): any {
     return {
-      step: 3,
+      step: 1,
       connection: undefined,
       cryptidAccount: '',
       did: undefined,
@@ -111,17 +108,14 @@ export default Vue.extend({
       this.step = 4;
     },
     async onAuthCodeExchanged(data: any) {
-      const keyPair = Keypair.fromSecretKey(bs58.decode(this.did.prvKey));
-
-      const key = createKey(keyPair, this.did.did, this.did.keyname);
-      const jwkPvt = await JsonWebKey.from(key);
+      const jwkPvt = await createJwkFromBs58(this.did.prvKey, this.did.did, this.did.keyname);
 
       const vp = presentation.create(data.credentials, `${this.did.did}#${this.did.keyname}`);
 
       const signedVp = await presentation.sign(vp, jwkPvt);
 
-      console.log('=== Signed Presentation ===');
-      console.log(signedVp);
+      this.$log.debug('=== Signed Presentation ===');
+      this.$log.debug(signedVp);
     },
   },
 });

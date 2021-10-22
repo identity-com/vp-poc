@@ -34,11 +34,15 @@ export const sign = async (vp: any, key: JsonWebKey, documentLoader = defaultDoc
   return result.items[0];
 };
 
-export const verify = async (vp: any, documentLoader = defaultDocumentLoader) => verifiable
-  .presentation.verify({
-    presentation: vp,
-    format: ['vp'],
-    documentLoader,
-    challenge: vp.proof.challenge,
-    suite: new JsonWebSignature({}),
-  });
+export const verify = async (vp: any, documentLoader = defaultDocumentLoader): Promise<boolean> => {
+  const verified = await verifiable
+    .presentation.verify({
+      presentation: vp,
+      format: ['vp'],
+      documentLoader,
+      challenge: vp.proof.challenge,
+      suite: new JsonWebSignature({}),
+    });
+
+  return verified.verified;
+};

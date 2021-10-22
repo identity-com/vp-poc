@@ -2,12 +2,25 @@ import { JsonWebKey } from '@transmute/json-web-signature';
 import { presentation } from '@/lib/index';
 import credentials from './fixtures/credentials.json';
 import { createJwkFromBs58 } from '@/lib/keyUtil';
+import defaultDocumentLoader from '@/lib/presentation/documentLoader';
+import didcontroller from './fixtures/didcontroller.json';
 
 const did = 'did:sol:devnet:3emPMNueBjcnLxpxJLrakNjBHyXZdZ1djdgqUvYNwpXF';
 const keyBs58 = '22jH4D3nP2aELBvEMFHYd16MQNACy3zSKJTNj3aM2ic8nbkT9KEYEFMcg5XXr39KNe8GMFYefVAyfvEGLniZ884u';
 
 const createPresentation = () => presentation.create(credentials, did);
 let jwk: JsonWebKey;
+
+// document loader to prevent reliance on solana node
+const documentLoader = async (iri: string) => {
+  if (iri.startsWith('did:sol')) {
+    return {
+      document: didcontroller,
+    };
+  }
+
+  return defaultDocumentLoader(iri);
+};
 
 describe('Presentation Tests', () => {
   beforeAll(async () => {
@@ -61,5 +74,28 @@ describe('Presentation Tests', () => {
           }),
         }),
       );
+  });
+
+  it('verifies a signed verifiable presentation', async () => {
+    const vp = createPresentation();
+
+    const signedVp = await presentation.sign(vp, jwk);
+
+    const verified = await presentation.verify(signedVp);
+
+    expect(verified)
+      .toEqual(true);
+  });
+
+  it('fails to verify a tampered signed verifiable presentation', async () => {
+    const vp = createPresentation();
+
+    const signedVp = await presentation.sign(vp, jwk);
+
+    signedVp.proof.jws = 'eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..WKFBoCg4B-eAFROQCNtreY6WNz2WDjGjRl2M9nmSLwmIVnHyamYQ7ulh3FB6_l51uhC_RP19aGEk4LrPqGB0Cw';
+
+    const verified = await presentation.verify(signedVp, documentLoader);
+
+    expect(verified).toEqual(false);
   });
 });

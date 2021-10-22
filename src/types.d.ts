@@ -4,7 +4,7 @@ declare module 'uuid';
 
 declare module 'vue-jslogger' {
   module 'vue/types/vue' {
-    interface VueConstructor<V extends Vue = Vue> {
+    interface VueConstructor {
       $log: {
         debug(...args: any[]): void;
         info(...args: any[]): void;

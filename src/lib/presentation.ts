@@ -2,7 +2,7 @@ import { verifiable } from '@transmute/vc.js';
 import { v4 as uuidv4 } from 'uuid';
 import { JsonWebSignature, JsonWebKey } from '@transmute/json-web-signature';
 
-import documentLoader from './presentation/documentLoader';
+import defaultDocumentLoader from './presentation/documentLoader';
 import convertCredential from './presentation/credential';
 
 export const create = (credentials: any[], controller: string) => ({
@@ -17,7 +17,7 @@ export const create = (credentials: any[], controller: string) => ({
   verifiableCredential: convertCredential(credentials, controller),
 });
 
-export const sign = async (vp: any, key: JsonWebKey) => {
+export const sign = async (vp: any, key: JsonWebKey, documentLoader = defaultDocumentLoader) => {
   const result = await verifiable.presentation.create({
     presentation: {
       ...vp,
@@ -34,10 +34,15 @@ export const sign = async (vp: any, key: JsonWebKey) => {
   return result.items[0];
 };
 
-export const verify = async (vp: any) => verifiable.presentation.verify({
-  presentation: vp,
-  format: ['vp'],
-  documentLoader,
-  challenge: vp.proof.challenge,
-  suite: new JsonWebSignature({}),
-});
+export const verify = async (vp: any, documentLoader = defaultDocumentLoader): Promise<boolean> => {
+  const verified = await verifiable
+    .presentation.verify({
+      presentation: vp,
+      format: ['vp'],
+      documentLoader,
+      challenge: vp.proof.challenge,
+      suite: new JsonWebSignature({}),
+    });
+
+  return verified.verified;
+};

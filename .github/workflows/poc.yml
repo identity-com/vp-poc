@@ -39,8 +39,5 @@ jobs:
       - name: Lint
         run: yarn workspace vp-poc run lint
 
-      - name: Audit
-        run: yarn workspace vp-poc run audit-ci
-
       - name: Build
         run: yarn workspace vp-poc run build

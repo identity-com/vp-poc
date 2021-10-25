@@ -1,6 +1,7 @@
 import { verifiable } from '@transmute/vc.js';
 import { v4 as uuidv4 } from 'uuid';
 import { JsonWebSignature, JsonWebKey } from '@transmute/json-web-signature';
+import { WalletAdapter } from '@identity.com/wallet-adapter-base';
 
 import defaultDocumentLoader from './presentation/documentLoader';
 import convertCredential from './presentation/credential';
@@ -37,6 +38,34 @@ export const sign = async (
 
   return result.items[0];
 };
+
+async function signWithCryptid(wallet: WalletAdapter, data: Uint8Array): Promise<Uint8Array> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const walletHack: any = wallet;
+  // eslint-disable-next-line no-underscore-dangle
+  const popupWindow = walletHack._wallet._popup as Window;
+  // eslint-disable-next-line no-underscore-dangle
+  const windowOrigin = walletHack._provider;
+
+  return new Promise<Uint8Array>((resolve, reject) => {
+    const signListener = (event: MessageEvent) => {
+      if (event.origin === windowOrigin) {
+        if (event.data.signature) {
+          resolve(event.data.signature);
+          window.removeEventListener('message', signListener);
+        } else if (event.data.error) {
+          reject(event.data.error);
+          window.removeEventListener('message', signListener);
+        }
+      }
+    };
+    window.addEventListener('message', signListener);
+    popupWindow.postMessage({
+      method: 'signWithDIDKey',
+      params: { message: data },
+    }, windowOrigin);
+  });
+}
 
 export const verify = async (
   vp: any,

@@ -58,17 +58,53 @@ import CivicExchange from '@/components/CivicExchange.vue';
 import { presentation } from '@/lib';
 import { createJwkFromBs58 } from '@/lib/keyUtil';
 
+// eslint-disable-next-line no-shadow
+enum StepEnum{
+  Connect,
+  GetDIDAndPrivate,
+  SIP,
+  Exchange,
+}
+
 interface ComponentData {
-  step: number;
+  step: StepEnum;
   cryptidAccount: string | undefined;
   did: {
     did: string;
     keyname: string;
     prvKey: string;
-    cryptid: CryptidInterface;
-    document: DIDDocument;
+    cryptid?: CryptidInterface;
+    document?: DIDDocument;
   } | undefined;
   civicAuthCode: string;
+}
+
+async function getDIDFromCryptid(wallet: WalletAdapter): Promise<string> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const walletHack: any = wallet;
+  // eslint-disable-next-line no-underscore-dangle
+  const popupWindow = walletHack._wallet._popup as Window;
+  // eslint-disable-next-line no-underscore-dangle
+  const windowOrigin = walletHack._provider;
+
+  return new Promise<string>((resolve, reject) => {
+    const didListener = (event: MessageEvent) => {
+      if (event.origin === windowOrigin) {
+        if (event.data.did) {
+          console.log('Got DID: ', event.data.did);
+          resolve(event.data.did);
+          window.removeEventListener('message', didListener);
+        } else if (event.data.error) {
+          reject(event.data.error);
+          window.removeEventListener('message', didListener);
+        }
+      }
+    };
+    window.addEventListener('message', didListener);
+    popupWindow.postMessage({
+      method: 'getDID',
+    }, windowOrigin);
+  });
 }
 
 export default Vue.extend({
@@ -89,16 +125,20 @@ export default Vue.extend({
   methods: {
     async onWalletConnected(wallet: WalletAdapter) {
       this.cryptidAccount = wallet.publicKey?.toBase58();
-      this.did = undefined;
+      this.did = {
+        did: await getDIDFromCryptid(wallet),
+        keyname: '',
+        prvKey: '',
+      };
 
       console.log(`Connected to Cryptid account: ${this.cryptidAccount}`);
 
-      this.step = 2;
+      this.step = StepEnum.GetDIDAndPrivate;
     },
     onWalletDisconnected() {
       this.did = undefined;
       this.cryptidAccount = '';
-      this.step = 1;
+      this.step = StepEnum.Connect;
     },
     async onDidConnected(did: string, keyname: string, prvKey: string, cryptid: CryptidInterface) {
       const document = await cryptid.document();
@@ -111,12 +151,12 @@ export default Vue.extend({
         document,
       };
 
-      this.step = 3;
+      this.step = StepEnum.SIP;
     },
     async onAuthCodeRecevied(token: string) {
       this.civicAuthCode = token;
 
-      this.step = 4;
+      this.step = StepEnum.Exchange;
     },
     async onAuthCodeExchanged(data: { credentials: any }) {
       if (!this.did) {

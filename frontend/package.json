@@ -17,6 +17,7 @@
     "@identity.com/wallet-adapter-base": "^0.6.1",
     "@identity.com/wallet-adapter-cryptid": "^0.7.1",
     "@identity.com/wallet-adapter-wallets": "^0.10.5",
+    "@identity.com/wallet-adapter-sollet": "^0.7.2",
     "@project-serum/sol-wallet-adapter": "^0.2.6",
     "@solana/wallet-adapter-base": "^0.6.0",
     "@solana/wallet-adapter-wallets": "^0.10.2",

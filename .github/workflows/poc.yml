@@ -34,7 +34,7 @@ jobs:
         run: npm install -g yarn
 
       - name: Install
-        run: yarn
+        run: yarn install --network-concurrency 1
 
       - name: Lint
         run: yarn workspace vp-poc run lint

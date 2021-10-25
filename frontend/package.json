@@ -1,10 +1,11 @@
 {
-  "name": "vp-poc-ts",
+  "name": "vp-poc",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve --port=8887",
     "build": "vue-cli-service build",
+    "test": "yarn test:unit",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
     "audit-ci": "audit-ci --config audit-ci.json"
@@ -18,7 +19,6 @@
     "@identity.com/wallet-adapter-wallets": "^0.10.5",
     "@project-serum/sol-wallet-adapter": "^0.2.6",
     "@solana/wallet-adapter-base": "^0.6.0",
-    "@solana/wallet-adapter-vue": "^0.2.0",
     "@solana/wallet-adapter-wallets": "^0.10.2",
     "@solana/web3.js": "^1.29.2",
     "@transmute/credentials-context": "^0.7.0-unstable.10",

@@ -1,3 +1,5 @@
+import Vue from 'vue';
+
 const loadConfig = () => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires,global-require
   const config = require('../config/default');
@@ -6,8 +8,8 @@ const loadConfig = () => {
 };
 
 export default {
-  install(Vue: any) {
+  install(vue: typeof Vue): void {
     // eslint-disable-next-line no-param-reassign
-    Vue.prototype.$config = loadConfig();
+    vue.prototype.$config = loadConfig();
   },
 };

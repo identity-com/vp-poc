@@ -48,6 +48,9 @@
 </template>
 <script lang="ts">
 import Vue from 'vue';
+import { Cryptid as CryptidInterface } from '@identity.com/cryptid';
+import { WalletAdapter } from '@solana/wallet-adapter-base';
+import { DIDDocument } from 'did-resolver';
 import Cryptid from '@/components/Cryptid.vue';
 import Civic from '@/components/Civic.vue';
 import Key from '@/components/Key.vue';
@@ -55,7 +58,18 @@ import CivicExchange from '@/components/CivicExchange.vue';
 import { presentation } from '@/lib';
 import { createJwkFromBs58 } from '@/lib/keyUtil';
 
-const storage: any = {};
+interface ComponentData {
+  step: number;
+  cryptidAccount: string | undefined;
+  did: {
+    did: string;
+    keyname: string;
+    prvKey: string;
+    cryptid: CryptidInterface;
+    document: DIDDocument;
+  } | undefined;
+  civicAuthCode: string;
+}
 
 export default Vue.extend({
   components: {
@@ -64,32 +78,29 @@ export default Vue.extend({
     Key,
     CivicExchange,
   },
-  data(): any {
+  data(): ComponentData {
     return {
       step: 1,
-      connection: undefined,
       cryptidAccount: '',
       did: undefined,
       civicAuthCode: '',
     };
   },
   methods: {
-    async onWalletConnected(wallet: any) {
-      storage.wallet = wallet;
-      this.cryptidAccount = wallet.publicKey.toBase58();
-      this.did = null;
+    async onWalletConnected(wallet: WalletAdapter) {
+      this.cryptidAccount = wallet.publicKey?.toBase58();
+      this.did = undefined;
 
-      this.$log.debug(`Connected to Cryptid account: ${this.cryptidAccount}`);
+      console.log(`Connected to Cryptid account: ${this.cryptidAccount}`);
 
       this.step = 2;
     },
     onWalletDisconnected() {
-      storage.wallet = undefined;
-      this.did = null;
-      this.cryptidAccount = null;
+      this.did = undefined;
+      this.cryptidAccount = '';
       this.step = 1;
     },
-    async onDidConnected(did: string, keyname: string, prvKey: string, cryptid: any) {
+    async onDidConnected(did: string, keyname: string, prvKey: string, cryptid: CryptidInterface) {
       const document = await cryptid.document();
 
       this.did = {
@@ -107,15 +118,19 @@ export default Vue.extend({
 
       this.step = 4;
     },
-    async onAuthCodeExchanged(data: any) {
+    async onAuthCodeExchanged(data: { credentials: any }) {
+      if (!this.did) {
+        return;
+      }
+
       const jwkPvt = await createJwkFromBs58(this.did.prvKey, this.did.did, this.did.keyname);
 
-      const vp = presentation.create(data.credentials, `${this.did.did}#${this.did.keyname}`);
+      const vp = presentation.create(data.credentials, `${this.did?.did}#${this.did?.keyname}`);
 
       const signedVp = await presentation.sign(vp, jwkPvt);
 
-      this.$log.debug('=== Signed Presentation ===');
-      this.$log.debug(signedVp);
+      console.log('=== Signed Presentation ===');
+      console.log(signedVp);
     },
   },
 });

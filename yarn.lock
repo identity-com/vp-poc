@@ -2490,6 +2490,11 @@
   resolved "https://registry.yarnpkg.com/@types/json5/-/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"
   integrity sha1-7ihweulOEdK4J7y+UnC86n8+ce4=
 
+"@types/jsrsasign@^8.0.13":
+  version "8.0.13"
+  resolved "https://registry.yarnpkg.com/@types/jsrsasign/-/jsrsasign-8.0.13.tgz#770c1e429107dfb0cc4f5b78b472584511a55a28"
+  integrity sha512-+0Ij59D6NXP48KkeLhPXeQKOyLjvA9CD7zacc0Svy2IWHdl62BmDeTvGSIwKaGZSoamLJOo+on1AG/wPRLsd7A==
+
 "@types/keccak@^3.0.1":
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/@types/keccak/-/keccak-3.0.1.tgz#1dfad12395f32927cf409707534dd796d57aa84c"
@@ -5556,7 +5561,7 @@ detect-node@^2.0.4:
   resolved "https://registry.yarnpkg.com/detect-node/-/detect-node-2.1.0.tgz#c9c70775a49c3d03bc2c06d9a73be550f978f8b1"
   integrity sha512-T0NIuQpnTvFDATNuHN5roPwSBG83rFsuO+MXXH9/3N1eFbn4wcPjttvjMLEPWJ0RGUYgQE7cGgS3tNxbqCGM7g==
 
-did-resolver@^3.0.1, did-resolver@^3.1.0:
+did-resolver@^3.0.1, did-resolver@^3.1.0, did-resolver@^3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/did-resolver/-/did-resolver-3.1.2.tgz#9ea891a6cc01ab0ea0a2fdd15effbc1e637466e5"
   integrity sha512-z0F571S95ZKES452sLyFSfUtQrvcW5OgZVCFq7D6gKReonTflgzdD6dcs27HbjUPXwTaXR9lzGFrA3mUd2K6uw==
@@ -11977,7 +11982,7 @@ sisteransi@^1.0.5:
   resolved "https://registry.yarnpkg.com/sisteransi/-/sisteransi-1.0.5.tgz#134d681297756437cc05ca01370d3a7a571075ed"
   integrity sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==
 
-"sjcl@github:civicteam/sjcl":
+sjcl@civicteam/sjcl.git:
   version "1.0.8"
   resolved "https://codeload.github.com/civicteam/sjcl/tar.gz/74fcc71a486a41d39200767d9235f6eac9e51f26"
 

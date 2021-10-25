@@ -10,16 +10,21 @@
 }
 </style>
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 import { getCryptidWallet } from '@identity.com/wallet-adapter-wallets';
+import { WalletAdapterNetwork, WalletAdapter } from '@solana/wallet-adapter-base';
 
-const DEFAULT_SOLANA_NETWORK = 'devnet';
+const DEFAULT_SOLANA_NETWORK = WalletAdapterNetwork.Devnet;
 
 export default Vue.extend({
   name: 'Cryptid',
   props: {
-    onConnected: Function,
-    onDisconnected: Function,
+    onConnected: {
+      type: Function as PropType<(wallet: WalletAdapter) => void>,
+    },
+    onDisconnected: {
+      type: Function as PropType<() => void>,
+    },
     network: {
       required: true,
       type: String,
@@ -29,11 +34,10 @@ export default Vue.extend({
     async connectWallet() {
       try {
         const cryptidAdapter = getCryptidWallet({
-          network: this.network ?? DEFAULT_SOLANA_NETWORK,
+          network: this.network as WalletAdapterNetwork ?? DEFAULT_SOLANA_NETWORK,
         });
         const wallet = cryptidAdapter.adapter();
         await wallet.connect();
-
         this.onConnected(wallet);
       } catch (e) {
         console.error(e);

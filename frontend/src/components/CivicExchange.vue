@@ -23,32 +23,16 @@
 }
 </style>
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 import rs from 'jsrsasign';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
 export default Vue.extend({
   name: 'CivicExchange',
-  components: {},
   data(): any {
     return {
-      civic: null,
+      parsedToken: null,
     };
-  },
-  computed: {
-    parsedToken() {
-      try {
-        if (!this.authCode) {
-          return null;
-        }
-        const parsed = rs.jws.JWS.parse(this.authCode);
-
-        return !parsed || !parsed.payloadObj ? ''
-          : JSON.stringify(parsed.payloadObj, null, 2);
-      } catch (e) {
-        return null;
-      }
-    },
   },
   props: {
     authCode: {
@@ -59,9 +43,24 @@ export default Vue.extend({
       type: String,
       required: true,
     },
-    onExchanged: Function,
+    onExchanged: {
+      type: Function as PropType<(data: any) => void>,
+    },
   },
   methods: {
+    mounted() {
+      try {
+        if (!this.authCode) {
+          this.parsedToken = null;
+        }
+        const parsed = rs.jws.JWS.parse(this.authCode);
+
+        this.parsedToken = !parsed || !parsed.payloadObj ? ''
+          : JSON.stringify(parsed.payloadObj, null, 2);
+      } catch (e) {
+        this.parsedToken = null;
+      }
+    },
     exchange() {
       axios.post(this.endpoint,
         { jwtToken: this.authCode },
@@ -70,10 +69,10 @@ export default Vue.extend({
             'Content-Type': 'application/json',
           },
         })
-        .then((response) => {
-          response.data.credentials.forEach((credential) => {
-            this.$log.debug('=== Credential ===');
-            this.$log.debug(JSON.stringify(credential, null, 2));
+        .then((response: AxiosResponse<any>) => {
+          response.data.credentials.forEach((credential: any) => {
+            console.log('=== Credential ===');
+            console.log(JSON.stringify(credential, null, 2));
           });
 
           this.onExchanged(response.data);

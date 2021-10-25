@@ -3,8 +3,8 @@
   "workspaces": [
     "frontend"
   ],
-  "scripts": {
-  },
-  "devDependencies": {
+  "scripts": {},
+  "devDependencies": {},
+  "dependencies": {
   }
 }

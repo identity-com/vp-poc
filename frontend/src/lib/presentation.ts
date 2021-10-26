@@ -4,7 +4,7 @@ import { JsonWebSignature, JsonWebKey } from '@transmute/json-web-signature';
 import { WalletAdapter } from '@identity.com/wallet-adapter-base';
 
 import defaultDocumentLoader from './presentation/documentLoader';
-import convertCredential from './presentation/credential';
+import { convert as convertCredential } from './presentation/credential';
 
 export const create = (credentials: any[], controller: string) => ({
   '@context': [

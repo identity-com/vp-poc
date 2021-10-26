@@ -103,7 +103,7 @@ export interface Credential {
   issuanceDate: string;
 }
 
-const convert = (
+export const convert = (
   credentials: any[],
   subject: string,
 ): any[] => credentials.map((credential) => {
@@ -119,6 +119,12 @@ const convert = (
   };
 
   // eslint-disable-next-line no-param-reassign
+  credential.meta = {
+    type: credential.type,
+    issuanceDate: credential.issuanceDate,
+  };
+
+  // eslint-disable-next-line no-param-reassign
   credential.type = [
     'VerifiableCredential',
     'IdentityCredential',
@@ -129,7 +135,7 @@ const convert = (
 
   // eslint-disable-next-line no-restricted-syntax
   for (const prop in credential) {
-    if (!credential[prop]) {
+    if (credential[prop] === null) {
       // eslint-disable-next-line no-param-reassign
       delete credential[prop];
     }
@@ -138,4 +144,24 @@ const convert = (
   return credential;
 });
 
-export default convert;
+export const revert = (credentials: any[]) => credentials.map((credential: any) => {
+  // eslint-disable-next-line no-param-reassign
+  credential.issuanceDate = credential.meta.issuanceDate;
+
+  // eslint-disable-next-line no-param-reassign
+  credential.type = ['Credential', credential.identifier];
+
+  // eslint-disable-next-line no-param-reassign
+  delete credential['@context'];
+  // eslint-disable-next-line no-param-reassign
+  delete credential.credentialSubject;
+  // eslint-disable-next-line no-param-reassign
+  delete credential.meta;
+
+  if (!credential.expirationDate) {
+    // eslint-disable-next-line no-param-reassign
+    credential.expirationDate = null;
+  }
+
+  return credential;
+});

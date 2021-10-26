@@ -51,7 +51,7 @@ describe('Presentation Tests', () => {
     const vp = createPresentation();
 
     const signedVp = await presentation.sign(vp, jwk);
-    console.log(signedVp);
+
     expect(signedVp)
       .toEqual(
         expect.objectContaining({

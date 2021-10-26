@@ -28,3 +28,17 @@ Lint checks:
 ```sh
 yarn workspace vp-poc lint
 ```
+
+### SIP Demo Backend
+
+Build:
+
+```sh
+yarn workspace sip-backend build
+```
+
+Start:
+
+```sh
+yarn workspace sip-backend build
+```

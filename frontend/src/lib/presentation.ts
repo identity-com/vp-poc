@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { JsonWebSignature, JsonWebKey } from '@transmute/json-web-signature';
 
 import defaultDocumentLoader from './presentation/documentLoader';
-import convertCredential from './presentation/credential';
+import { convert as convertCredential } from './presentation/credential';
 
 export const create = (credentials: any[], controller: string) => ({
   '@context': [

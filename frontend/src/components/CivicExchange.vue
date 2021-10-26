@@ -48,19 +48,6 @@ export default Vue.extend({
     },
   },
   methods: {
-    mounted() {
-      try {
-        if (!this.authCode) {
-          this.parsedToken = null;
-        }
-        const parsed = rs.jws.JWS.parse(this.authCode);
-
-        this.parsedToken = !parsed || !parsed.payloadObj ? ''
-          : JSON.stringify(parsed.payloadObj, null, 2);
-      } catch (e) {
-        this.parsedToken = null;
-      }
-    },
     exchange() {
       axios.post(this.endpoint,
         { jwtToken: this.authCode },
@@ -70,14 +57,27 @@ export default Vue.extend({
           },
         })
         .then((response: AxiosResponse<any>) => {
-          response.data.credentials.forEach((credential: any) => {
-            console.log('=== Credential ===');
-            console.log(JSON.stringify(credential, null, 2));
-          });
+          // response.data.credentials.forEach((credential: any) => {
+          // console.log('=== Credential ===');
+          // console.log(JSON.stringify(credential, null, 2));
+          // });
 
           this.onExchanged(response.data);
         });
     },
+  },
+  mounted() {
+    try {
+      if (!this.authCode) {
+        this.parsedToken = null;
+      }
+
+      const parsed = rs.jws.JWS.parse(this.authCode);
+      this.parsedToken = !parsed || !parsed.payloadObj ? ''
+        : JSON.stringify(parsed.payloadObj, null, 2);
+    } catch (e) {
+      this.parsedToken = null;
+    }
   },
 });
 </script>

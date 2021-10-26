@@ -60,7 +60,7 @@ export default Vue.extend({
           throw new Error('Key not found on DID');
         }
 
-        this.$log.debug(JSON.stringify(didDocument, null, 2));
+        console.log(JSON.stringify(didDocument, null, 2));
 
         this.connection(this.did, foundKey.id.split('#')[1], this.prvKey, cryptidInstance);
       } catch (e) {

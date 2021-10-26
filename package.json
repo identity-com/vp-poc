@@ -1,7 +1,8 @@
 {
   "private": true,
   "workspaces": [
-    "frontend"
+    "frontend",
+    "sip-backend"
   ],
   "scripts": {},
   "devDependencies": {},

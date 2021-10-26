@@ -11,6 +11,11 @@ export default {
         '@protected': true,
         id: '@id',
         type: '@type',
+        meta: {
+          '@id': 'cvc:meta',
+          '@type': '@json',
+          '@container': '@graph',
+        },
         cvc: 'https://www.identity.com/credentials/v1#',
         identifier: {
           '@id': 'cvc:identifier',

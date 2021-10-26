@@ -39,6 +39,8 @@
     "core-js": "^3.6.5",
     "did-resolver": "^3.1.2",
     "jsrsasign": "^10.4.1",
+    "lodash": "^4.17.21",
+    "setimmediate": "^1.0.5",
     "uuid": "^8.3.2",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",

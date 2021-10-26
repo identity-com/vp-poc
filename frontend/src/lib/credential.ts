@@ -1,7 +1,14 @@
-import { Credential } from '@/lib/presentation/credential';
+import { VC } from '@identity.com/credential-commons';
+import { Credential, revert } from '@/lib/presentation/credential';
 
-export const x: any = '123';
+export default async (credentials: any[]) => {
+  const revertedCredentials = revert(credentials);
+  const promises = revertedCredentials.map(async (credential) => {
+    const vc = await VC.fromJSON(credential);
+    return VC.nonCryptographicallySecureVerify(vc);
+  });
 
-export const verifyCredential = (credential: Credential) => {
-  console.log(credential);
+  const results = await Promise.all(promises);
+
+  return results.find((result) => !result);
 };

@@ -21,8 +21,8 @@ export default Vue.extend({
   name: 'Key',
   data(): any {
     return {
-      prvKey: '',
-      did: '',
+      prvKey: '22jH4D3nP2aELBvEMFHYd16MQNACy3zSKJTNj3aM2ic8nbkT9KEYEFMcg5XXr39KNe8GMFYefVAyfvEGLniZ884u',
+      did: 'did:sol:devnet:3emPMNueBjcnLxpxJLrakNjBHyXZdZ1djdgqUvYNwpXF',
     };
   },
   props: {
@@ -60,7 +60,7 @@ export default Vue.extend({
           throw new Error('Key not found on DID');
         }
 
-        this.$log.debug(JSON.stringify(didDocument, null, 2));
+        console.log(JSON.stringify(didDocument, null, 2));
 
         this.connection(this.did, foundKey.id.split('#')[1], this.prvKey, cryptidInstance);
       } catch (e) {

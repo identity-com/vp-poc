@@ -14,6 +14,8 @@
 <script lang="ts">
 import Vue from 'vue';
 
+declare const civic: any;
+
 export default Vue.extend({
   name: 'Civic',
   components: {},
@@ -23,7 +25,7 @@ export default Vue.extend({
     };
   },
   mounted() {
-    // eslint-disable-next-line
+    // eslint-disable-next-line new-cap
     this.civic = new civic.sip({
       appId: this.appId,
       hideIntro: false,

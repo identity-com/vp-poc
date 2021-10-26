@@ -1,0 +1,10 @@
+{
+  "low": true,
+  "package-manager": "auto",
+  "report": true,
+  "allowlist": [
+    1002401,
+    1002475,
+    1002996
+  ]
+}

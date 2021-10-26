@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { JsonWebSignature, JsonWebKey } from '@transmute/json-web-signature';
 
 import defaultDocumentLoader from './presentation/documentLoader';
-import convertCredential from './presentation/credential';
+import { convert as convertCredential } from './presentation/credential';
 
 export const create = (credentials: any[], controller: string) => ({
   '@context': [
@@ -17,7 +17,11 @@ export const create = (credentials: any[], controller: string) => ({
   verifiableCredential: convertCredential(credentials, controller),
 });
 
-export const sign = async (vp: any, key: JsonWebKey, documentLoader = defaultDocumentLoader) => {
+export const sign = async (
+  vp: any,
+  key: JsonWebKey,
+  documentLoader = defaultDocumentLoader,
+): Promise<any> => {
   const result = await verifiable.presentation.create({
     presentation: {
       ...vp,
@@ -34,7 +38,10 @@ export const sign = async (vp: any, key: JsonWebKey, documentLoader = defaultDoc
   return result.items[0];
 };
 
-export const verify = async (vp: any, documentLoader = defaultDocumentLoader): Promise<boolean> => {
+export const verify = async (
+  vp: any,
+  documentLoader = defaultDocumentLoader,
+): Promise<boolean> => {
   const verified = await verifiable
     .presentation.verify({
       presentation: vp,

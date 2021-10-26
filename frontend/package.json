@@ -1,10 +1,11 @@
 {
-  "name": "vp-poc-ts",
+  "name": "vp-poc",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve --port=80",
+    "serve": "vue-cli-service serve --port=8887",
     "build": "vue-cli-service build",
+    "test": "yarn test:unit",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
     "audit-ci": "audit-ci --config audit-ci.json"
@@ -18,7 +19,6 @@
     "@identity.com/wallet-adapter-wallets": "^0.10.5",
     "@project-serum/sol-wallet-adapter": "^0.2.6",
     "@solana/wallet-adapter-base": "^0.6.0",
-    "@solana/wallet-adapter-vue": "^0.2.0",
     "@solana/wallet-adapter-wallets": "^0.10.2",
     "@solana/web3.js": "^1.29.2",
     "@transmute/credentials-context": "^0.7.0-unstable.10",
@@ -35,6 +35,7 @@
     "bs58": "^4.0.1",
     "civic-sip-api": "^1.2.1",
     "core-js": "^3.6.5",
+    "did-resolver": "^3.1.2",
     "jsrsasign": "^10.4.1",
     "uuid": "^8.3.2",
     "vue": "^2.6.11",
@@ -45,6 +46,7 @@
   },
   "devDependencies": {
     "@types/jest": "^24.0.19",
+    "@types/jsrsasign": "^8.0.13",
     "@typescript-eslint/eslint-plugin": "^4.18.0",
     "@typescript-eslint/parser": "^4.18.0",
     "@vue/cli-plugin-babel": "~4.5.0",

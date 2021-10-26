@@ -35,7 +35,7 @@ const cvcContexts: any = {
   'https://www.identity.com/credentials/v1': credentialContext,
 };
 
-export default async (iri: string) => {
+export default async (iri: string): Promise<{ document: any }> => {
   if (iri.startsWith('did:')) {
     const doc = await resolve(iri.split('#')[0]);
 
@@ -72,7 +72,5 @@ export default async (iri: string) => {
     return { document: contexts[iri] };
   }
 
-  const def = defaultDocumentLoader(iri);
-
-  return def;
+  return defaultDocumentLoader(iri);
 };

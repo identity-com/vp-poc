@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 
-const exchangeCode = (endpoint: string, jwt: string) => {
+const exchangeCode = (endpoint: string, jwt: string) : void => {
   axios.post(endpoint,
     { jwtToken: jwt },
     {

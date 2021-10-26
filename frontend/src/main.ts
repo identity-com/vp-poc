@@ -20,4 +20,4 @@ new Vue({
   render: (h) => h(App),
 }).$mount('#app');
 
-schemaLoader.addLoader(new CVCSchemaLoader());
+// schemaLoader.addLoader(new CVCSchemaLoader());

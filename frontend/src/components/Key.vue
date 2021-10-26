@@ -21,8 +21,8 @@ export default Vue.extend({
   name: 'Key',
   data(): any {
     return {
-      prvKey: '22jH4D3nP2aELBvEMFHYd16MQNACy3zSKJTNj3aM2ic8nbkT9KEYEFMcg5XXr39KNe8GMFYefVAyfvEGLniZ884u',
-      did: 'did:sol:devnet:3emPMNueBjcnLxpxJLrakNjBHyXZdZ1djdgqUvYNwpXF',
+      prvKey: '',
+      did: '',
     };
   },
   props: {

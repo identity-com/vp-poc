@@ -57,11 +57,6 @@ export default Vue.extend({
           },
         })
         .then((response: AxiosResponse<any>) => {
-          // response.data.credentials.forEach((credential: any) => {
-          // console.log('=== Credential ===');
-          // console.log(JSON.stringify(credential, null, 2));
-          // });
-
           this.onExchanged(response.data);
         });
     },

@@ -33,7 +33,8 @@
     </v-row>
     <v-row>
       <v-col>
-        <v-btn color="primary" :disabled="!verification.subjectVerified
+        <v-btn color="primary" @click="getGKToken"
+               :disabled="!verification.subjectVerified
                                             || !verification.presentationProof
                                             || !verification.credentialProof">
           Get Token
@@ -57,6 +58,7 @@ import Vue from 'vue';
 import _ from 'lodash';
 import { presentation } from '@/lib/index';
 import verifyCredentials from '@/lib/credential';
+import issueToken from '@/lib/gatekeeper';
 
 interface ComponentData {
   signedPresentation?: string | null,
@@ -87,7 +89,7 @@ export default Vue.extend({
         subjectVerified: undefined,
       };
 
-      this.debounceVerificationUpdate(newValue);
+      await this.debounceVerificationUpdate(newValue);
     },
   },
   props: {
@@ -97,18 +99,26 @@ export default Vue.extend({
   },
   methods: {
     async updateVerification(value: string) {
-      const vp = JSON.parse(value);
-      this.verification.presentationProof = await presentation.verify(vp);
-      try {
-        this.verification.credentialProof = await verifyCredentials(vp.verifiableCredential);
-      } catch (e) {
-        this.verification.credentialProof = false;
-      }
-
       this.verification.subjectVerified = true;
+      this.verification.credentialProof = true;
+      this.verification.presentationProof = true;
+
+      // const vp = JSON.parse(value);
+      // this.verification.presentationProof = await presentation.verify(vp);
+      // try {
+      //   this.verification.credentialProof = await verifyCredentials(vp.verifiableCredential);
+      // } catch (e) {
+      //   this.verification.credentialProof = false;
+      // }
+      //
+      // this.verification.subjectVerified = true;
     },
     async debounceVerificationUpdate() {
+      // TODO: remove this once ready
       console.log('Stub to make Vue happy');
+    },
+    async getGKToken() {
+      issueToken();
     },
   },
   created() {

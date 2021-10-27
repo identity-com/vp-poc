@@ -1,26 +1,20 @@
 <template>
-  <v-btn @click="connectWallet">
-    <v-img src="../assets/cryptid.svg" class="cryptid"/>
+  <v-btn @click="connectWallet" color="#DC3131" outlined>
+    <v-img src="../assets/cryptid.png" class="cryptid"/>
+    CONNECT
   </v-btn>
 </template>
-<style scoped>
-.cryptid {
-  height: 18px;
-  width: 116px;
-}
-</style>
+
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import { getCryptidWallet } from '@identity.com/wallet-adapter-wallets';
-import { WalletAdapterNetwork, WalletAdapter } from '@solana/wallet-adapter-base';
-
-const DEFAULT_SOLANA_NETWORK = WalletAdapterNetwork.Devnet;
+import { WalletAdapter } from '@solana/wallet-adapter-base';
+import * as cryptid from '@/lib/cryptid';
 
 export default Vue.extend({
   name: 'Cryptid',
   props: {
     onConnected: {
-      type: Function as PropType<(wallet: WalletAdapter) => void>,
+      type: Function as PropType<(wallet: WalletAdapter, did: string) => void>,
     },
     onDisconnected: {
       type: Function as PropType<() => void>,
@@ -33,12 +27,12 @@ export default Vue.extend({
   methods: {
     async connectWallet() {
       try {
-        const cryptidAdapter = getCryptidWallet({
-          network: this.network as WalletAdapterNetwork ?? DEFAULT_SOLANA_NETWORK,
-        });
-        const wallet = cryptidAdapter.adapter();
+        const wallet = cryptid.getCryptidWalletAdapter()
+          .adapter();
         await wallet.connect();
-        this.onConnected(wallet);
+        const did = await cryptid.getDIDFromCryptid(wallet);
+
+        this.onConnected(wallet, did);
       } catch (e) {
         console.error(e);
       }

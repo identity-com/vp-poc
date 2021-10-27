@@ -1,6 +1,6 @@
 import cre from '@transmute/credentials-context';
 import sec from '@transmute/security-context';
-import did from '@transmute/did-context';
+import didContext from '@transmute/did-context';
 
 import { JsonWebKey } from '@transmute/json-web-signature';
 import vc from '@digitalbazaar/vc';
@@ -23,8 +23,8 @@ const contexts: any = {
   [cre.constants.CREDENTIALS_CONTEXT_V1_URL]: cre.contexts.get(
     cre.constants.CREDENTIALS_CONTEXT_V1_URL,
   ),
-  [did.constants.DID_CONTEXT_V1_URL]: did.contexts.get(
-    did.constants.DID_CONTEXT_V1_URL,
+  [didContext.constants.DID_CONTEXT_V1_URL]: didContext.contexts.get(
+    didContext.constants.DID_CONTEXT_V1_URL,
   ),
   [sec.constants.BLS12381_2020_V1_URL]: sec.contexts.get(
     sec.constants.BLS12381_2020_V1_URL,
@@ -35,11 +35,22 @@ const cvcContexts: any = {
   'https://www.identity.com/credentials/v1': credentialContext,
 };
 
+// Basic DID document cache (not for production use)
+const didDocumentCache: any = {};
+
 export default async (iri: string): Promise<{ document: any }> => {
   if (iri.startsWith('did:')) {
-    const doc = await resolve(iri.split('#')[0]);
+    const did = iri.split('#')[0];
 
-    const foundKey = doc?.publicKey?.find((pk) => pk.id.startsWith(iri));
+    let doc;
+    if (didDocumentCache[did]) {
+      doc = didDocumentCache[did];
+    } else {
+      doc = await resolve(did);
+      didDocumentCache[did] = doc;
+    }
+
+    const foundKey = doc?.publicKey?.find((pk: any) => pk.id.startsWith(iri));
 
     const key = await JsonWebKey.from(foundKey as Ed25519VerificationKey2018);
 

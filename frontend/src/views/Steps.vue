@@ -44,7 +44,7 @@
         </v-stepper-content>
 
         <v-stepper-step :complete="step > 5" step="5">
-          Exchange Token for Credentials
+          Verify Presentation & Credentials
         </v-stepper-step>
         <v-stepper-content step="5">
           <VPValidator :presentation="signedVp"/>

@@ -88,7 +88,7 @@ interface ComponentData {
     document?: DIDDocument;
   } | undefined;
   civicAuthCode: string;
-  signedVp: any | undefined;
+  signedVp?: any;
 }
 
 let connectedWallet: WalletAdapter;
@@ -118,7 +118,7 @@ export default Vue.extend({
       this.did = {
         did,
         keyname: keyName,
-        prvKey: '',
+        prvKey: this.did ? this.did.prvKey : '',
       };
 
       console.log(`Connected to Cryptid account: ${this.cryptidAccount}`);

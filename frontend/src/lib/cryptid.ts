@@ -22,19 +22,25 @@ export function getCryptidWalletAdapter(network: WalletAdapterNetwork = DEFAULT_
   return cryptidAdapter;
 }
 
-export async function getDIDFromCryptid(wallet: WalletAdapter): Promise<string> {
+export async function getDIDFromCryptid(wallet: WalletAdapter): Promise<{
+  did: string,
+  keyName: string,
+}> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const walletHack: any = wallet;
   // eslint-disable-next-line no-underscore-dangle
   const popupWindow = walletHack._wallet._popup as Window;
   // eslint-disable-next-line no-underscore-dangle
   const windowOrigin = walletHack._provider;
-  return new Promise<string>((resolve, reject) => {
+  return new Promise<{
+    did: string,
+    keyName: string,
+  }>((resolve, reject) => {
     const didListener = (event: MessageEvent) => {
       if (event.origin === windowOrigin) {
         if (event.data.did) {
           console.log('Got DID: ', event.data.did);
-          resolve(event.data.did);
+          resolve({ did: event.data.did, keyName: event.data.keyName });
           window.removeEventListener('message', didListener);
         } else if (event.data.error) {
           reject(event.data.error);

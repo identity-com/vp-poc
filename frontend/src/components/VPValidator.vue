@@ -46,8 +46,13 @@
 <style>
 .presentation textarea {
   font-family: monospace;
+<<<<<<< HEAD
   font-size: 11px;
   line-height: 11px !important;
+=======
+  font-size: 10px;
+  line-height: 10px !important;
+>>>>>>> feature/IDCOM-1273_add_sign_function
   white-space: pre;
   overflow-wrap: normal;
   overflow-x: scroll;

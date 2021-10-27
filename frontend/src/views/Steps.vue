@@ -33,7 +33,7 @@
             :on-auth-code-received="onAuthCodeRecevied"/>
         </v-stepper-content>
 
-        <v-stepper-step :complete="step > 4" step="4">
+        <v-stepper-step step="4">
           Exchange Token for Credentials
         </v-stepper-step>
         <v-stepper-content step="4">
@@ -41,13 +41,6 @@
             :auth-code="civicAuthCode"
             :on-exchanged="onAuthCodeExchanged"
             :endpoint="$config['sipExchangeEndpoint']"/>
-        </v-stepper-content>
-
-        <v-stepper-step :complete="step > 5" step="5">
-          Verify Presentation & Credentials
-        </v-stepper-step>
-        <v-stepper-content step="5">
-          <VPValidator :presentation="signedVp"/>
         </v-stepper-content>
       </v-stepper>
     </v-container>
@@ -66,8 +59,16 @@ import CivicExchange from '@/components/CivicExchange.vue';
 import { presentation } from '@/lib';
 import { createJwkFromBs58 } from '@/lib/keyUtil';
 
+// eslint-disable-next-line no-shadow
+enum StepEnum{
+  Connect,
+  GetDIDAndPrivate,
+  SIP,
+  Exchange,
+}
+
 interface ComponentData {
-  step: number;
+  step: StepEnum;
   cryptidAccount: string | undefined;
   did: {
     did: string;
@@ -96,7 +97,6 @@ export default Vue.extend({
       cryptidAccount: '',
       did: undefined,
       civicAuthCode: '',
-      signedVp: undefined,
     };
   },
   methods: {
@@ -107,12 +107,12 @@ export default Vue.extend({
 
       console.log(`Connected to Cryptid account: ${this.cryptidAccount}`);
 
-      this.step = 4;
+      this.step = StepEnum.GetDIDAndPrivate;
     },
     onWalletDisconnected() {
       this.did = undefined;
       this.cryptidAccount = '';
-      this.step = 1;
+      this.step = StepEnum.Connect;
     },
     async onDidConnected(did: string, keyname: string, prvKey: string, cryptid: CryptidInterface) {
       const document = await cryptid.document();
@@ -125,12 +125,12 @@ export default Vue.extend({
         document,
       };
 
-      this.step = 3;
+      this.step = StepEnum.SIP;
     },
     async onAuthCodeRecevied(token: string) {
       this.civicAuthCode = token;
 
-      this.step = 4;
+      this.step = StepEnum.Exchange;
     },
     async onAuthCodeExchanged(data: { credentials: any }) {
       if (!this.did) {

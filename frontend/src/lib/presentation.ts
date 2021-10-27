@@ -1,9 +1,9 @@
 import { verifiable } from '@transmute/vc.js';
 import { v4 as uuidv4 } from 'uuid';
 import { JsonWebSignature, JsonWebKey } from '@transmute/json-web-signature';
-import { WalletAdapter } from '@solana/wallet-adapter-base';
-import { base64url } from '@/lib/base64url';
+import { WalletAdapter } from '@identity.com/wallet-adapter-base';
 
+import { base64url } from '@transmute/ed25519-key-pair/dist/encoding';
 import defaultDocumentLoader from './presentation/documentLoader';
 import { convert as convertCredential } from './presentation/credential';
 
@@ -19,43 +19,6 @@ export const create = (credentials: any[], controller: string) => ({
   verifiableCredential: convertCredential(credentials, controller),
 });
 
-export const sign = async (
-  wallet: WalletAdapter,
-  vp: any,
-  key: JsonWebKey,
-  documentLoader = defaultDocumentLoader,
-): Promise<any> => {
-  const result = await verifiable.presentation.create({
-    presentation: {
-      ...vp,
-      holder: { id: key.id },
-    },
-    format: ['vp'],
-    documentLoader,
-    challenge: uuidv4(),
-    suite: new JsonWebSignature({
-      key,
-    }),
-  });
-
-  return result.items[0];
-};
-
-export const verify = async (
-  vp: any,
-  documentLoader = defaultDocumentLoader,
-): Promise<boolean> => {
-  const verified = await verifiable
-    .presentation.verify({
-      presentation: vp,
-      format: ['vp'],
-      documentLoader,
-      challenge: vp.proof.challenge,
-      suite: new JsonWebSignature({}),
-    });
-
-  return verified.verified;
-};
 async function signWithCryptid(wallet: WalletAdapter, data: Uint8Array): Promise<Uint8Array> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const walletHack: any = wallet;
@@ -107,7 +70,7 @@ const jwtSigner = (wallet: WalletAdapter) => () => ({
   },
 });
 
-export const walletSign = async (
+export const sign = async (
   wallet: WalletAdapter,
   vp: any,
   key: JsonWebKey,
@@ -134,4 +97,20 @@ export const walletSign = async (
   });
 
   return result.items[0];
+};
+
+export const verify = async (
+  vp: any,
+  documentLoader = defaultDocumentLoader,
+): Promise<boolean> => {
+  const verified = await verifiable
+    .presentation.verify({
+      presentation: vp,
+      format: ['vp'],
+      documentLoader,
+      challenge: vp.proof.challenge,
+      suite: new JsonWebSignature({}),
+    });
+
+  return verified.verified;
 };

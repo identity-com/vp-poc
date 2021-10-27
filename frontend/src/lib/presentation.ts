@@ -2,8 +2,7 @@ import { verifiable } from '@transmute/vc.js';
 import { v4 as uuidv4 } from 'uuid';
 import { JsonWebSignature, JsonWebKey } from '@transmute/json-web-signature';
 import { WalletAdapter } from '@identity.com/wallet-adapter-base';
-
-import { base64url } from '@transmute/ed25519-key-pair/dist/encoding';
+import { base64url } from '@/lib/base64url';
 import defaultDocumentLoader from './presentation/documentLoader';
 import { convert as convertCredential } from './presentation/credential';
 

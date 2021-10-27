@@ -7,7 +7,7 @@
         </v-stepper-step>
 
         <v-stepper-content step="1">
-          <Cryptid v-if="!cryptidAccount"
+          <Cryptid
                    v-bind:on-connected="onWalletConnected"
                    v-bind:on-disconnected="onWalletDisconnected"
                    :network="$config['solanaNetwork']"/>
@@ -33,7 +33,7 @@
             :on-auth-code-received="onAuthCodeRecevied"/>
         </v-stepper-content>
 
-        <v-stepper-step step="4">
+        <v-stepper-step :complete="step > 4" step="4">
           Exchange Token for Credentials
         </v-stepper-step>
         <v-stepper-content step="4">
@@ -41,6 +41,13 @@
             :auth-code="civicAuthCode"
             :on-exchanged="onAuthCodeExchanged"
             :endpoint="$config['sipExchangeEndpoint']"/>
+        </v-stepper-content>
+
+        <v-stepper-step :complete="step > 5" step="5">
+          Exchange Token for Credentials
+        </v-stepper-step>
+        <v-stepper-content step="4">
+          <VPValidator :presentation="signedVp"/>
         </v-stepper-content>
       </v-stepper>
     </v-container>
@@ -59,8 +66,10 @@ import CivicExchange from '@/components/CivicExchange.vue';
 import { presentation } from '@/lib';
 import { createJwkFromBs58 } from '@/lib/keyUtil';
 
+import tmpPresentation from './tmp/presentation.json';
+
 // eslint-disable-next-line no-shadow
-enum StepEnum{
+enum StepEnum {
   Connect,
   GetDIDAndPrivate,
   SIP,
@@ -107,7 +116,8 @@ export default Vue.extend({
 
       console.log(`Connected to Cryptid account: ${this.cryptidAccount}`);
 
-      this.step = StepEnum.GetDIDAndPrivate;
+      const jwkPvt = await createJwkFromBs58(this.did.prvKey, this.did.did, this.did.keyname);
+      presentation.sign(wallet, tmpPresentation, jwkPvt);
     },
     onWalletDisconnected() {
       this.did = undefined;
@@ -140,7 +150,7 @@ export default Vue.extend({
       const jwkPvt = await createJwkFromBs58(this.did.prvKey, this.did.did, this.did.keyname);
 
       const vp = presentation.create(data.credentials, `${this.did?.did}#${this.did?.keyname}`);
-
+      console.log(JSON.stringify(vp, null, 2));
       this.signedVp = await presentation.sign(connectedWallet, vp, jwkPvt);
 
       this.step = 5;

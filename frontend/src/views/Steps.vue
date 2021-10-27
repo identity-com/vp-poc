@@ -88,7 +88,10 @@ interface ComponentData {
   signedVp: any | undefined;
 }
 
-async function getDIDFromCryptid(wallet: WalletAdapter): Promise<string> {
+async function getDIDFromCryptid(wallet: WalletAdapter): Promise<{
+  did: string,
+  keyName: string,
+}> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const walletHack: any = wallet;
   // eslint-disable-next-line no-underscore-dangle
@@ -96,12 +99,16 @@ async function getDIDFromCryptid(wallet: WalletAdapter): Promise<string> {
   // eslint-disable-next-line no-underscore-dangle
   const windowOrigin = walletHack._provider;
 
-  return new Promise<string>((resolve, reject) => {
+  return new Promise<{
+    did: string,
+    keyName: string,
+  }>((resolve, reject) => {
     const didListener = (event: MessageEvent) => {
       if (event.origin === windowOrigin) {
         if (event.data.did) {
           console.log('Got DID: ', event.data.did);
-          resolve(event.data.did);
+          console.log('Got keyName: ', event.data.keyName);
+          resolve({ did: event.data.did, keyName: event.data.keyName });
           window.removeEventListener('message', didListener);
         } else if (event.data.error) {
           reject(event.data.error);
@@ -126,7 +133,7 @@ export default Vue.extend({
   },
   data(): ComponentData {
     return {
-      step: 5,
+      step: 1,
       cryptidAccount: '',
       did: undefined,
       civicAuthCode: 'eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI0OThjZTE1MC05ZGU1LTQ3YjgtYmY0Yi01YzUwMjc0MmNmZmIiLCJpYXQiOjE2MzUyNDY5NDQuMTEyLCJleHAiOjE2MzUyNDg3NDQuMTEyLCJpc3MiOiJjaXZpYy1zaXAtaG9zdGVkLXNlcnZpY2UiLCJhdWQiOiJodHRwczovL2FwaS5jaXZpYy5jb20vc2lwLyIsInN1YiI6IlNrRzFFM2F0TSIsImRhdGEiOnsiY29kZVRva2VuIjoiZDFhMzI2N2ItZTc1NS00NDM0LTk5ZDctMDJmZGFmODkyNDM1In19.yFw4WQZjoc_PB6O0rl-bwJnZZGg8prPq4Yzjd-Q541GZbZa7H1Xq2j8-HPGKd1Qn4ww5MjumnbYYD32AVjHuqQ',
@@ -136,9 +143,10 @@ export default Vue.extend({
   methods: {
     async onWalletConnected(wallet: WalletAdapter) {
       this.cryptidAccount = wallet.publicKey?.toBase58();
+      const { did, keyName } = await getDIDFromCryptid(wallet);
       this.did = {
-        did: await getDIDFromCryptid(wallet),
-        keyname: '',
+        did,
+        keyname: keyName,
         prvKey: '',
       };
 
@@ -178,7 +186,7 @@ export default Vue.extend({
 
       const vp = presentation.create(data.credentials, `${this.did?.did}#${this.did?.keyname}`);
 
-      this.signedVp = await presentation.sign(vp, jwkPvt);
+      this.signedVp = await presentation.sign(undefined as unknown as WalletAdapter, vp, jwkPvt);
 
       console.log(JSON.stringify(this.signedVp));
 

@@ -5,6 +5,7 @@ import { presentation } from '@/lib';
 import credentials from './fixtures/credentials.json';
 import { createJwkFromBs58 } from '@/lib/keyUtil';
 import { revert as revertCredential } from '@/lib/presentation/credential';
+import { WalletAdapter } from '@solana/wallet-adapter-base';
 
 const did = 'did:sol:devnet:3emPMNueBjcnLxpxJLrakNjBHyXZdZ1djdgqUvYNwpXF';
 const keyBs58 = '22jH4D3nP2aELBvEMFHYd16MQNACy3zSKJTNj3aM2ic8nbkT9KEYEFMcg5XXr39KNe8GMFYefVAyfvEGLniZ884u';
@@ -16,7 +17,7 @@ const createPresentation = () => presentation.create(credentials, did);
 const createdSignedPresentation = async () => {
   const vp = createPresentation();
 
-  return presentation.sign(vp, jwk);
+  return presentation.sign(undefined as unknown as WalletAdapter, vp, jwk);
 };
 
 describe('credential verifiation checks', () => {

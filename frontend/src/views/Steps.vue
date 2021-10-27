@@ -67,6 +67,7 @@ import { presentation } from '@/lib';
 import { createJwkFromBs58 } from '@/lib/keyUtil';
 
 import tmpPresentation from './tmp/presentation.json';
+import { getDIDFromCryptid } from '@/lib/cryptid';
 
 // eslint-disable-next-line no-shadow
 enum StepEnum {
@@ -112,12 +113,18 @@ export default Vue.extend({
     async onWalletConnected(wallet: WalletAdapter) {
       this.cryptidAccount = wallet.publicKey?.toBase58();
       connectedWallet = wallet;
-      // this.did = undefined;
+
+      const { did, keyName } = await getDIDFromCryptid(wallet);
+      this.did = {
+        did,
+        keyname: keyName,
+        prvKey: '',
+      };
 
       console.log(`Connected to Cryptid account: ${this.cryptidAccount}`);
 
       const jwkPvt = await createJwkFromBs58(this.did.prvKey, this.did.did, this.did.keyname);
-      presentation.sign(wallet, tmpPresentation, jwkPvt);
+      await presentation.sign(wallet, tmpPresentation, jwkPvt);
     },
     onWalletDisconnected() {
       this.did = undefined;
@@ -150,7 +157,7 @@ export default Vue.extend({
       const jwkPvt = await createJwkFromBs58(this.did.prvKey, this.did.did, this.did.keyname);
 
       const vp = presentation.create(data.credentials, `${this.did?.did}#${this.did?.keyname}`);
-      console.log(JSON.stringify(vp, null, 2));
+
       this.signedVp = await presentation.sign(connectedWallet, vp, jwkPvt);
 
       this.step = 5;

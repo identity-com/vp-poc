@@ -2,19 +2,11 @@ import { verifiable } from '@transmute/vc.js';
 import { v4 as uuidv4 } from 'uuid';
 import { JsonWebSignature, JsonWebKey } from '@transmute/json-web-signature';
 import { WalletAdapter } from '@identity.com/wallet-adapter-base';
-
+import bs58 from 'bs58';
+import { base64url } from '@/lib/base64url';
 import defaultDocumentLoader from './presentation/documentLoader';
 import { convert as convertCredential } from './presentation/credential';
-
-const base64url = {
-  encode: (unencoded: any) => {
-    const encoded = Buffer.from(unencoded || '').toString('base64');
-    return encoded
-      .replace('/+/g', '-')
-      .replace('///g', '_')
-      .replace('/=+$/g', '');
-  },
-};
+import { getDIDFromCryptid } from '@/lib/cryptid';
 
 export const create = (credentials: any[], controller: string) => ({
   '@context': [
@@ -40,6 +32,7 @@ async function signWithCryptid(wallet: WalletAdapter, data: Uint8Array): Promise
     const signListener = (event: MessageEvent) => {
       if (event.origin === windowOrigin) {
         if (event.data.signature) {
+          console.log('Received signature: ', bs58.encode(event.data.signature));
           resolve(event.data.signature);
           window.removeEventListener('message', signListener);
         } else if (event.data.error) {
@@ -80,28 +73,37 @@ const jwtSigner = (wallet: WalletAdapter) => () => ({
 });
 
 export const sign = async (
-  wallet: WalletAdapter,
+  signer: WalletAdapter | JsonWebKey,
   vp: any,
-  key: JsonWebKey,
   documentLoader = defaultDocumentLoader,
 ): Promise<any> => {
-  const newKey = new JsonWebKey();
-  newKey.id = key.id;
-  newKey.type = key.type;
-  newKey.controller = key.controller;
-  newKey.verifier = key.verifier;
-  newKey.signer = jwtSigner(wallet);
+  let key: JsonWebKey;
+
+  if ((signer as JsonWebKey).controller) {
+    key = signer as JsonWebKey;
+  } else {
+    const {
+      did,
+      keyName,
+    } = await getDIDFromCryptid(signer as WalletAdapter);
+
+    key = new JsonWebKey();
+    key.id = `${did}#${keyName}`;
+    key.type = 'Ed25519VerificationKey2018';
+    key.controller = did;
+    key.signer = jwtSigner(signer as WalletAdapter);
+  }
 
   const result = await verifiable.presentation.create({
     presentation: {
       ...vp,
-      holder: { id: key.id },
+      holder: { id: key.controller },
     },
     format: ['vp'],
     documentLoader,
     challenge: uuidv4(),
     suite: new JsonWebSignature({
-      key: newKey,
+      key,
     }),
   });
 

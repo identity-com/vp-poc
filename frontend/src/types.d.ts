@@ -4,3 +4,4 @@ declare module 'uuid';
 declare module 'jsrsasign';
 declare module '@identity.com/credential-commons';
 declare module 'setimmediate';
+declare module 'civic-schemas';

@@ -10,5 +10,7 @@ export default async (credentials: any[]) => {
 
   const results = await Promise.all(promises);
 
-  return results.find((result) => !result);
+  const invalid = results.find((result) => !result);
+
+  return invalid === undefined;
 };

@@ -1,5 +1,6 @@
 import Vue from 'vue';
-import { schemaLoader, CVCSchemaLoader } from '@identity.com/credential-commons';
+import { schemaLoader, CVCSchemaLoader as CivicSchemaLoader } from '@identity.com/credential-commons';
+// import { SchemaLoader as CivicSchemaLoader } from 'civic-schemas';
 import App from './App.vue';
 import router from './router';
 import store from './store';
@@ -20,4 +21,4 @@ new Vue({
   render: (h) => h(App),
 }).$mount('#app');
 
-// schemaLoader.addLoader(new CVCSchemaLoader());
+schemaLoader.addLoader(new CivicSchemaLoader(undefined, null, 'http://0.0.0.0:8125'));

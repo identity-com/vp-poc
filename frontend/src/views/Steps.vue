@@ -48,14 +48,6 @@
         </v-stepper-content>
 
         <v-stepper-step :complete="step > 4" step="4">
-          Credentials
-        </v-stepper-step>
-        <v-stepper-content step="4">
-          <VPValidator :presentation="signedVp" :on-verified="onProofVerified"
-                       :account="cryptidAccount"/>
-        </v-stepper-content>
-
-        <v-stepper-step :complete="step > 4" step="4">
           Verify Presentation & Credentials
         </v-stepper-step>
         <v-stepper-content step="4">
@@ -90,7 +82,6 @@ import { DIDDocument } from 'did-resolver';
 import { GatewayToken } from '@identity.com/solana-gateway-ts';
 import Cryptid from '@/components/Cryptid.vue';
 import VPValidator from '@/components/VPValidator.vue';
-import DisplayCredentials from '@/components/DisplayCredentials.vue';
 import Civic from '@/components/Civic.vue';
 import CivicExchange from '@/components/CivicExchange.vue';
 import { presentation } from '@/lib';
@@ -101,9 +92,8 @@ enum StepEnum {
   Connect = 1,
   SIP = 2,
   Exchange = 3,
-  Credentials = 4,
-  Validate = 5,
-  Token = 6
+  Validate = 4,
+  Token = 5
 }
 
 interface ComponentData {
@@ -117,7 +107,6 @@ interface ComponentData {
     document?: DIDDocument;
   } | undefined;
   civicAuthCode: string;
-  credentials?: any;
   unsignedVp?: any;
   signedVp?: any;
   gkToken?: string
@@ -132,7 +121,6 @@ export default Vue.extend({
     Civic,
     CivicExchange,
     VPValidator,
-    DisplayCredentials,
   },
   data(): ComponentData {
     return {

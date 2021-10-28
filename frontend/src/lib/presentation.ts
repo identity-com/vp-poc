@@ -73,21 +73,26 @@ const jwtSigner = (wallet: WalletAdapter) => () => ({
 });
 
 export const sign = async (
-  wallet: WalletAdapter,
+  signer: WalletAdapter | JsonWebKey,
   vp: any,
   documentLoader = defaultDocumentLoader,
 ): Promise<any> => {
-  const {
-    did,
-    keyName,
-  } = await getDIDFromCryptid(wallet);
+  let key: JsonWebKey;
 
-  const key = new JsonWebKey();
-  key.id = `${did}#${keyName}`;
-  key.type = 'Ed25519VerificationKey2018';
-  key.controller = did;
-  // newKey.verifier = key.verifier;
-  key.signer = jwtSigner(wallet);
+  if ((signer as JsonWebKey).controller) {
+    key = signer as JsonWebKey;
+  } else {
+    const {
+      did,
+      keyName,
+    } = await getDIDFromCryptid(signer as WalletAdapter);
+
+    key = new JsonWebKey();
+    key.id = `${did}#${keyName}`;
+    key.type = 'Ed25519VerificationKey2018';
+    key.controller = did;
+    key.signer = jwtSigner(signer as WalletAdapter);
+  }
 
   const result = await verifiable.presentation.create({
     presentation: {

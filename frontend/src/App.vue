@@ -17,7 +17,14 @@
     </v-main>
   </v-app>
 </template>
+<style>
+.display-text {
+  font-family: monospace;
+  font-size: 11px !important;
+  line-height: 11px !important;
+}
 
+</style>
 <script lang="ts">
 import Vue from 'vue';
 

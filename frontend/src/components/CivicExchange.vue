@@ -13,14 +13,7 @@
     </v-btn>
   </v-container>
 </template>
-<style scoped>
-.parsed {
-  font-family: monospace;
-  font-size: 10px;
-  line-height: 10px !important;
-}
 
-</style>
 <style>
 .v-textarea textarea {
   line-height: 1rem !important;

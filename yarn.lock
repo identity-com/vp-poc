@@ -10101,7 +10101,7 @@ jest-environment-jsdom@^25.5.0:
     jest-util "^25.5.0"
     jsdom "^15.2.1"
 
-jest-environment-node@^24.9.0:
+jest-environment-node@^24.8.0, jest-environment-node@^24.9.0:
   version "24.9.0"
   resolved "https://registry.yarnpkg.com/jest-environment-node/-/jest-environment-node-24.9.0.tgz#333d2d2796f9687f2aeebf0742b519f33c1cbfd3"
   integrity sha512-6d4V2f4nxzIzwendo27Tr0aFm+IXWa0XEUnaH6nU0FMaozxovt+sfRvh4J47wL1OvF83I3SSTu0XK+i4Bqe7uA==
@@ -10123,6 +10123,13 @@ jest-environment-node@^25.5.0:
     jest-mock "^25.5.0"
     jest-util "^25.5.0"
     semver "^6.3.0"
+
+jest-environment-uint8array@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/jest-environment-uint8array/-/jest-environment-uint8array-1.0.0.tgz#2e816921f95179f2ba6ef3b4604e8b3d35db6adb"
+  integrity sha512-PhZFy1N9AyuAs4Mr25/I+oiHEF25t7e74UTL9oTCmasfy8HGAKvPL6Wc43zgF0sV05dLLPS9yplxHfgxMw1E0w==
+  dependencies:
+    jest-environment-node "^24.8.0"
 
 jest-get-type@^24.9.0:
   version "24.9.0"

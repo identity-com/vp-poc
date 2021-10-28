@@ -17,14 +17,14 @@
           :indeterminate="verification.presentationProof === undefined"
         ></v-checkbox>
       </v-col>
-      <v-col>
-        <v-checkbox
-          readonly
-          v-model="verification.subjectVerified"
-          label="Subject Verified"
-          :indeterminate="verification.subjectVerified === undefined"
-        ></v-checkbox>
-      </v-col>
+      <!--      <v-col>-->
+      <!--        <v-checkbox-->
+      <!--          readonly-->
+      <!--          v-model="verification.subjectVerified"-->
+      <!--          label="Subject Verified"-->
+      <!--          :indeterminate="verification.subjectVerified === undefined"-->
+      <!--        ></v-checkbox>-->
+      <!--      </v-col>-->
     </v-row>
     <v-row>
       <v-col>
@@ -34,6 +34,7 @@
     <v-row>
       <v-col>
         <v-btn color="primary" @click="getGKToken"
+               outlined
                :disabled="!verification.subjectVerified
                             || !verification.presentationProof
                             || !verification.credentialProof">
@@ -54,11 +55,11 @@
 }
 </style>
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 import _ from 'lodash';
 import { presentation } from '@/lib/index';
 import verifyCredentials from '@/lib/credential';
-import issueToken from '@/lib/gatekeeper';
+import * as gatekeeper from '@/lib/gatekeeper';
 
 interface ComponentData {
   signedPresentation?: string | null,
@@ -99,6 +100,13 @@ export default Vue.extend({
     presentation: {
       type: Object,
     },
+    onVerified: {
+      type: Function as PropType<() => void>,
+    },
+    account: {
+      type: String,
+      required: true,
+    },
   },
   methods: {
     async updateVerification(value: string) {
@@ -108,36 +116,43 @@ export default Vue.extend({
         subjectVerified: false,
       };
 
-      try {
-        const vp = JSON.parse(value);
-
+      if (value) {
         try {
-          verification.presentationProof = await presentation.verify(vp);
+          const vp = JSON.parse(value);
+
+          try {
+            verification.presentationProof = await presentation.verify(vp);
+          } catch (e) {
+            console.log(e);
+            verification.presentationProof = false;
+          }
+
+          try {
+            verification.credentialProof = await verifyCredentials(vp.verifiableCredential);
+          } catch (e) {
+            console.log(e);
+            verification.credentialProof = false;
+          }
+
+          // eslint-disable-next-line no-bitwise
+          verification.presentationProof &= verification.credentialProof;
+
+          verification.subjectVerified = true;
         } catch (e) {
           console.log(e);
-          verification.presentationProof = false;
         }
-
-        try {
-          verification.credentialProof = await verifyCredentials(vp.verifiableCredential);
-        } catch (e) {
-          console.log(e);
-          verification.credentialProof = false;
-        }
-
-        verification.subjectVerified = true;
-      } catch (e) {
-        console.log(e);
       }
 
       this.verification = verification;
     },
     async debounceVerificationUpdate(value: string) {
       // TODO: remove this once ready
-      console.log('Stub to make Vue happy');
+      console.log(`Stub to make Vue happy ${value}`);
     },
     async getGKToken() {
-      issueToken();
+      const token = await gatekeeper.issueToken(this.account);
+
+      this.onVerified(token);
     },
   },
   created() {

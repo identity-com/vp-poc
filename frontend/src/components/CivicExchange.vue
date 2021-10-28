@@ -8,7 +8,7 @@
     <v-textarea readonly rows="12" class="parsed" v-model="parsedToken" label="Payload"
                 outlined/>
 
-    <v-btn :disabled="busy" color="primary" @click="exchange">
+    <v-btn :disabled="busy" color="primary" @click="exchange" outlined>
       Exchange
     </v-btn>
   </v-container>

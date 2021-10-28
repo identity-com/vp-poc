@@ -35,8 +35,8 @@
       <v-col>
         <v-btn color="primary" @click="getGKToken"
                :disabled="!verification.subjectVerified
-                                            || !verification.presentationProof
-                                            || !verification.credentialProof">
+                            || !verification.presentationProof
+                            || !verification.credentialProof">
           Get Token
         </v-btn>
       </v-col>
@@ -91,6 +91,9 @@ export default Vue.extend({
 
       await this.debounceVerificationUpdate(newValue);
     },
+    presentation() {
+      this.signedPresentation = JSON.stringify(this.presentation, null, 2);
+    },
   },
   props: {
     presentation: {
@@ -99,21 +102,37 @@ export default Vue.extend({
   },
   methods: {
     async updateVerification(value: string) {
-      this.verification.subjectVerified = true;
-      this.verification.credentialProof = true;
-      this.verification.presentationProof = true;
+      const verification = {
+        presentationProof: false,
+        credentialProof: false,
+        subjectVerified: false,
+      };
 
-      // const vp = JSON.parse(value);
-      // this.verification.presentationProof = await presentation.verify(vp);
-      // try {
-      //   this.verification.credentialProof = await verifyCredentials(vp.verifiableCredential);
-      // } catch (e) {
-      //   this.verification.credentialProof = false;
-      // }
-      //
-      // this.verification.subjectVerified = true;
+      try {
+        const vp = JSON.parse(value);
+
+        try {
+          verification.presentationProof = await presentation.verify(vp);
+        } catch (e) {
+          console.log(e);
+          verification.presentationProof = false;
+        }
+
+        try {
+          verification.credentialProof = await verifyCredentials(vp.verifiableCredential);
+        } catch (e) {
+          console.log(e);
+          verification.credentialProof = false;
+        }
+
+        verification.subjectVerified = true;
+      } catch (e) {
+        console.log(e);
+      }
+
+      this.verification = verification;
     },
-    async debounceVerificationUpdate() {
+    async debounceVerificationUpdate(value: string) {
       // TODO: remove this once ready
       console.log('Stub to make Vue happy');
     },

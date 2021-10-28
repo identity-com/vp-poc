@@ -1,13 +1,17 @@
 <template>
-  <div>
-    <v-text-field readonly v-model="authCode" label="SIP Auth Token"/>
+  <v-container>
+    <div>&nbsp;</div>
 
-    <v-textarea readonly rows="11" class="parsed" v-model="parsedToken"></v-textarea>
+    <v-textarea readonly rows="5" class="parsed" v-model="authCode" label="SIP Auth Token"
+                outlined/>
 
-    <v-btn :disabled="!parsedToken || parsedToken === ''" color="primary" @click="exchange">
+    <v-textarea readonly rows="12" class="parsed" v-model="parsedToken" label="Payload"
+                outlined/>
+
+    <v-btn :disabled="busy" color="primary" @click="exchange">
       Exchange
     </v-btn>
-  </div>
+  </v-container>
 </template>
 <style scoped>
 .parsed {
@@ -27,11 +31,17 @@ import Vue, { PropType } from 'vue';
 import rs from 'jsrsasign';
 import axios, { AxiosResponse } from 'axios';
 
+interface ComponentData {
+  parsedToken: string | null,
+  busy: boolean
+}
+
 export default Vue.extend({
   name: 'CivicExchange',
-  data(): any {
+  data(): ComponentData {
     return {
       parsedToken: null,
+      busy: false,
     };
   },
   props: {
@@ -49,6 +59,8 @@ export default Vue.extend({
   },
   methods: {
     exchange() {
+      this.busy = true;
+
       axios.post(this.endpoint,
         { jwtToken: this.authCode },
         {
@@ -58,21 +70,28 @@ export default Vue.extend({
         })
         .then((response: AxiosResponse<any>) => {
           this.onExchanged(response.data);
+        })
+        .catch((e) => {
+          this.busy = false;
+
+          console.log(e);
         });
     },
   },
-  mounted() {
-    try {
-      if (!this.authCode) {
+  watch: {
+    authCode() {
+      try {
+        if (!this.authCode) {
+          this.parsedToken = null;
+        }
+
+        const parsed = rs.jws.JWS.parse(this.authCode);
+        this.parsedToken = !parsed || !parsed.payloadObj ? ''
+          : JSON.stringify(parsed.payloadObj, null, 2);
+      } catch (e) {
         this.parsedToken = null;
       }
-
-      const parsed = rs.jws.JWS.parse(this.authCode);
-      this.parsedToken = !parsed || !parsed.payloadObj ? ''
-        : JSON.stringify(parsed.payloadObj, null, 2);
-    } catch (e) {
-      this.parsedToken = null;
-    }
+    },
   },
 });
 </script>

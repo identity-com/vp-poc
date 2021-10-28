@@ -51,7 +51,7 @@ describe('Presentation Tests', () => {
   it('signs a verifiable presentation', async () => {
     const vp = createPresentation();
 
-    const signedVp = await presentation.sign(undefined as unknown as WalletAdapter, vp, jwk);
+    const signedVp = await presentation.sign(jwk, vp);
 
     expect(signedVp)
       .toEqual(
@@ -80,7 +80,7 @@ describe('Presentation Tests', () => {
   it('verifies a signed verifiable presentation', async () => {
     const vp = createPresentation();
 
-    const signedVp = await presentation.sign(undefined as unknown as WalletAdapter, vp, jwk);
+    const signedVp = await presentation.sign(jwk, vp);
 
     const verified = await presentation.verify(signedVp);
 
@@ -88,13 +88,14 @@ describe('Presentation Tests', () => {
       .toEqual(true);
   });
 
-  it('fails to verify a tampered signed verifiable presentation', async () => {
+  it.only('fails to verify a tampered signed verifiable presentation', async () => {
     const vp = createPresentation();
 
-    const signedVp = await presentation.sign(undefined as unknown as WalletAdapter, vp, jwk);
+    const signedVp = await presentation.sign(jwk, vp);
 
-    signedVp.proof.jws = 'eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..WKFBoCg4B-eAFROQCNtreY6WNz2WDjGjRl2M9nmSLwmIVnHyamYQ7ulh3FB6_l51uhC_RP19aGEk4LrPqGB0Cw';
+    // signedVp.proof.jws = 'eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..WKFBoCg4B-eAFROQCNtreY6WNz2WDjGjRl2M9nmSLwmIVnHyamYQ7ulh3FB6_l51uhC_RP19aGEk4LrPqGB0Cw';
 
+    signedVp.verifiableCredential[0].credentialSubject.id = '123';
     const verified = await presentation.verify(signedVp, documentLoader);
 
     expect(verified).toEqual(false);

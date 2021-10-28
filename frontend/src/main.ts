@@ -21,4 +21,4 @@ new Vue({
   render: (h) => h(App),
 }).$mount('#app');
 
-schemaLoader.addLoader(new CivicSchemaLoader(undefined, null, 'https://dev-schemas.civic.com.s3-website-us-east-1.amazonaws.com/preprod'));
+schemaLoader.addLoader(new CivicSchemaLoader(undefined, null, 'http://0.0.0.0:8125'));

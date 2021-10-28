@@ -5,16 +5,7 @@ import { WalletAdapter } from '@identity.com/wallet-adapter-base';
 import { base64url } from '@/lib/base64url';
 import defaultDocumentLoader from './presentation/documentLoader';
 import { convert as convertCredential } from './presentation/credential';
-
-const base64url = {
-  encode: (unencoded: any) => {
-    const encoded = Buffer.from(unencoded || '').toString('base64');
-    return encoded
-      .replace('/+/g', '-')
-      .replace('///g', '_')
-      .replace('/=+$/g', '');
-  },
-};
+import { getDIDFromCryptid } from '@/lib/cryptid';
 
 export const create = (credentials: any[], controller: string) => ({
   '@context': [
@@ -80,31 +71,41 @@ const jwtSigner = (wallet: WalletAdapter) => () => ({
 });
 
 export const sign = async (
-  wallet: WalletAdapter,
+  signer: WalletAdapter | JsonWebKey,
   vp: any,
-  key: JsonWebKey,
   documentLoader = defaultDocumentLoader,
 ): Promise<any> => {
-  const newKey = new JsonWebKey();
-  newKey.id = key.id;
-  newKey.type = key.type;
-  newKey.controller = key.controller;
-  newKey.verifier = key.verifier;
-  newKey.signer = jwtSigner(wallet);
+  let signingKey: JsonWebKey;
+  signingKey = signer as JsonWebKey;
+
+  if ((signer as JsonWebKey).controller) {
+    signingKey = signer as JsonWebKey;
+  } else {
+    const {
+      did,
+      keyName,
+    } = await getDIDFromCryptid(signer as WalletAdapter);
+
+    signingKey = new JsonWebKey();
+    signingKey.id = `${did}#${keyName}`;
+    signingKey.type = 'Ed25519VerificationKey2018';
+    signingKey.controller = did;
+    signingKey.signer = jwtSigner(signer as WalletAdapter);
+  }
 
   const result = await verifiable.presentation.create({
     presentation: {
       ...vp,
-      holder: { id: key.id },
+      holder: { id: signingKey.id },
     },
-    format: ['vp'],
+    format: ['vp', 'vp-jwt'],
     documentLoader,
     challenge: uuidv4(),
     suite: new JsonWebSignature({
-      key: newKey,
+      key: signingKey,
     }),
   });
-
+  console.log(result.items[1]);
   return result.items[0];
 };
 

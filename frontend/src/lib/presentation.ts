@@ -2,6 +2,7 @@ import { verifiable } from '@transmute/vc.js';
 import { v4 as uuidv4 } from 'uuid';
 import { JsonWebSignature, JsonWebKey } from '@transmute/json-web-signature';
 import { WalletAdapter } from '@identity.com/wallet-adapter-base';
+import bs58 from 'bs58';
 import { base64url } from '@/lib/base64url';
 import defaultDocumentLoader from './presentation/documentLoader';
 import { convert as convertCredential } from './presentation/credential';
@@ -31,6 +32,7 @@ async function signWithCryptid(wallet: WalletAdapter, data: Uint8Array): Promise
     const signListener = (event: MessageEvent) => {
       if (event.origin === windowOrigin) {
         if (event.data.signature) {
+          console.log('Received signature: ', bs58.encode(event.data.signature));
           resolve(event.data.signature);
           window.removeEventListener('message', signListener);
         } else if (event.data.error) {

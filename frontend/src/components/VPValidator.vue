@@ -57,6 +57,7 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import _ from 'lodash';
+import { GatewayToken } from '@identity.com/solana-gateway-ts';
 import { presentation } from '@/lib/index';
 import verifyCredentials from '@/lib/credential';
 import * as gatekeeper from '@/lib/gatekeeper';
@@ -101,7 +102,7 @@ export default Vue.extend({
       type: Object,
     },
     onVerified: {
-      type: Function as PropType<() => void>,
+      type: Function as PropType<(token: GatewayToken) => void>,
     },
     account: {
       type: String,
@@ -134,9 +135,6 @@ export default Vue.extend({
             verification.credentialProof = false;
           }
 
-          // eslint-disable-next-line no-bitwise
-          verification.presentationProof &= verification.credentialProof;
-
           verification.subjectVerified = true;
         } catch (e) {
           console.log(e);
@@ -145,9 +143,10 @@ export default Vue.extend({
 
       this.verification = verification;
     },
-    async debounceVerificationUpdate(value: string) {
+    debounceVerificationUpdate(value: string): Promise<void> | undefined {
       // TODO: remove this once ready
       console.log(`Stub to make Vue happy ${value}`);
+      return Promise.resolve();
     },
     async getGKToken() {
       const token = await gatekeeper.issueToken(this.account);

@@ -40,5 +40,6 @@ yarn workspace sip-backend build
 Start:
 
 ```sh
-yarn workspace sip-backend build
+cd sip-backend
+node .
 ```

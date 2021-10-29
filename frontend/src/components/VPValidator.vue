@@ -6,6 +6,7 @@
           readonly
           v-model="verification.credentialProof"
           label="Credential Verified"
+          color="green"
           :indeterminate="verification.credentialProof === undefined"
         ></v-checkbox>
       </v-col>
@@ -14,6 +15,7 @@
           readonly
           v-model="verification.presentationProof"
           label="Presentation Verified"
+          color="green"
           :indeterminate="verification.presentationProof === undefined"
         ></v-checkbox>
       </v-col>
@@ -33,7 +35,7 @@
     </v-row>
     <v-row>
       <v-col>
-        <v-btn color="primary" @click="getGKToken"
+        <v-btn color="green" @click="getGKToken"
                outlined
                :disabled="!verification.subjectVerified
                             || !verification.presentationProof

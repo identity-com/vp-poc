@@ -2,10 +2,10 @@
   <v-container>
     <div>&nbsp;</div>
 
-    <v-textarea readonly rows="5" class="parsed" v-model="authCode" label="SIP Auth Token"
-                outlined/>
+    <v-textarea readonly rows="5" class="parsed display-text" v-model="authCode"
+                label="SIP Auth Token" outlined/>
 
-    <v-textarea readonly rows="12" class="parsed" v-model="parsedToken" label="Payload"
+    <v-textarea readonly rows="12" class="parsed display-text" v-model="parsedToken" label="Payload"
                 outlined/>
 
     <v-btn :disabled="busy" color="primary" @click="exchange" outlined>
@@ -62,7 +62,7 @@ export default Vue.extend({
           },
         })
         .then((response: AxiosResponse<any>) => {
-          this.onExchanged(response.data);
+          this.onExchanged({ credentials: response.data });
         })
         .catch((e) => {
           this.busy = false;

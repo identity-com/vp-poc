@@ -1,7 +1,10 @@
 <template>
   <v-main>
     <v-container>
-      <v-stepper v-model="step" vertical>
+      <v-card>
+        <v-card-title style="border-bottom: 2px solid #1875D1">User Steps</v-card-title>
+
+        <v-stepper v-model="step" vertical class="elevation-0">
         <v-stepper-step :complete="step > 1" step="1">
           Connect Cryptid
 
@@ -68,7 +71,11 @@
           </v-btn>
         </v-stepper-content>
 
-        <v-stepper-step :complete="step > 6" step="6">
+      </v-stepper>
+
+        <v-card-title style="border-bottom: 2px solid #4CAF4F">Gatekeeper Steps</v-card-title>
+      <v-stepper v-model="step" vertical class="elevation-0">
+        <v-stepper-step :complete="step > 6" step="6" color="green">
           Verify Presentation & Credentials
         </v-stepper-step>
         <v-stepper-content step="6">
@@ -76,7 +83,7 @@
                        :account="cryptidAccount"/>
         </v-stepper-content>
 
-        <v-stepper-step :complete="step > 7" step="7">
+        <v-stepper-step :complete="step > 7" step="7" color="green">
           Gateway Token
         </v-stepper-step>
         <v-stepper-content step="7">
@@ -85,6 +92,7 @@
                       outlined class="gk-token"/>
         </v-stepper-content>
       </v-stepper>
+      </v-card>
     </v-container>
   </v-main>
 </template>

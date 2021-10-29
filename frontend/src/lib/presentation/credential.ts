@@ -120,7 +120,6 @@ export const convert = (
 
   // eslint-disable-next-line no-param-reassign
   credential.meta = {
-    type: credential.type,
     issuanceDate: credential.issuanceDate,
   };
 

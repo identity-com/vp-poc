@@ -43,10 +43,9 @@ export default class extends CVCSchemaLoader {
   // eslint-disable-next-line class-methods-use-this
   loadLocalSchema(identifier:string) {
     if (identifiers[identifier]) {
-      console.log(`Found: ${identifier}`);
       return identifiers[identifier];
     }
-    console.log(`Not found: ${identifier}`);
+
     return null;
   }
 }

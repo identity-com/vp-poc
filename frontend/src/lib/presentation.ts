@@ -42,6 +42,7 @@ async function signWithCryptid(wallet: WalletAdapter, data: Uint8Array): Promise
       }
     };
     window.addEventListener('message', signListener);
+    console.log('signWithDIDKey');
     popupWindow.postMessage({
       method: 'signWithDIDKey',
       params: { message: data },

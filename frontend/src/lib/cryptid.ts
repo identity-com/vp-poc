@@ -40,6 +40,7 @@ export async function getDIDFromCryptid(wallet: WalletAdapter): Promise<{
       if (event.origin === windowOrigin) {
         if (event.data.did) {
           console.log('Got DID: ', event.data.did);
+          console.log('Got Keyname: ', event.data.keyName);
           resolve({ did: event.data.did, keyName: event.data.keyName });
           window.removeEventListener('message', didListener);
         } else if (event.data.error) {
@@ -52,5 +53,7 @@ export async function getDIDFromCryptid(wallet: WalletAdapter): Promise<{
     popupWindow.postMessage({
       method: 'getDID',
     }, windowOrigin);
+
+    popupWindow.focus();
   });
 }

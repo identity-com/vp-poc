@@ -44,6 +44,7 @@ const createToken = (scopeRequestId: string) => {
 };
 
 export default async (token: string) => {
+  console.log(config);
   const scopeRequestId = getScopeRequestId(token);
 
   const endPoint = `${config.sip.endpoint}prod/v3/scopeRequest/${scopeRequestId}`;
@@ -55,6 +56,8 @@ export default async (token: string) => {
       Authorization: authToken,
     },
   });
+
+  console.log(JSON.stringify(response.data, null, 2));
 
   return response.data.components.identity.response.verifiableData
     .map((data: any) => data.credential);

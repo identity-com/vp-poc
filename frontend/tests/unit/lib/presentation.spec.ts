@@ -1,5 +1,4 @@
 import { JsonWebKey } from '@transmute/json-web-signature';
-import { WalletAdapter } from '@solana/wallet-adapter-base';
 import { presentation } from '@/lib/index';
 import credentials from './fixtures/credentials.json';
 import { createJwkFromBs58 } from '@/lib/keyUtil';

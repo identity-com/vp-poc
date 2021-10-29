@@ -1,12 +1,14 @@
 <template>
   <div>
-    <v-checkbox
-      readonly
-      label="Presentation Verified"
-    />
+<!--    <v-checkbox-->
+<!--      readonly-->
+<!--      label="Credential Verified"-->
+<!--    />-->
+    <div>&nbsp;</div>
     <v-textarea readonly rows="12" class="display-text" v-model="credentialJson"
                 label="Verifiable Credentials"
                 outlined/>
+
   </div>
 </template>
 <script lang="ts">
@@ -35,8 +37,6 @@ export default Vue.extend({
     },
   },
   methods: {},
-  // created() {
-  // },
   mounted() {
     this.credentialJson = JSON.stringify(this.credentials, null, 2);
   },

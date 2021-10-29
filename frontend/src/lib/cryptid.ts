@@ -5,7 +5,7 @@ import { WalletAdapterNetwork, WalletAdapter } from '@solana/wallet-adapter-base
 const DEFAULT_SOLANA_NETWORK = WalletAdapterNetwork.Devnet;
 
 export function getCryptidWalletAdapter(network: WalletAdapterNetwork = DEFAULT_SOLANA_NETWORK) {
-  const LOCAL_URL = 'http://localhost:3000';
+  const LOCAL_URL = 'https://cryptid.identity.com';
   const cryptidAdapter = {
     name: WalletName.Cryptid,
     url: LOCAL_URL,

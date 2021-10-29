@@ -12,7 +12,7 @@ app.use(cors());
 // define a route handler for the default home page
 // @ts-ignore
 app.get('/', (req: any, res: any) => {
-  res.send('Basic Dummy SIP Server');
+  res.send('Demo SIP Server');
 });
 
 app.use('/credentials', credentialsApi);

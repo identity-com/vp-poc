@@ -47,7 +47,7 @@ describe('Presentation Tests', () => {
       );
   });
 
-  it.skip('signs a verifiable presentation', async () => {
+  it('signs a verifiable presentation', async () => {
     const vp = createPresentation();
 
     const signedVp = await presentation.sign(jwk, vp);
@@ -56,7 +56,7 @@ describe('Presentation Tests', () => {
       .toEqual(
         expect.objectContaining({
           type: ['VerifiablePresentation'],
-          holder: { id: `${did}#default` },
+          holder: { id: `${did}` },
           verifiableCredential: expect.arrayContaining([
             expect.objectContaining({
               type: ['VerifiableCredential', 'IdentityCredential'],

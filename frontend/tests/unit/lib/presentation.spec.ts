@@ -38,9 +38,9 @@ describe('Presentation Tests', () => {
           verifiableCredential: expect.arrayContaining([
             expect.objectContaining({
               type: ['VerifiableCredential', 'IdentityCredential'],
-              credentialSubject: {
+              credentialSubject: expect.objectContaining({
                 id: did,
-              },
+              }),
             }),
           ]),
         }),
@@ -60,9 +60,9 @@ describe('Presentation Tests', () => {
           verifiableCredential: expect.arrayContaining([
             expect.objectContaining({
               type: ['VerifiableCredential', 'IdentityCredential'],
-              credentialSubject: {
+              credentialSubject: expect.objectContaining({
                 id: did,
-              },
+              }),
             }),
           ]),
           proof: expect.objectContaining({
@@ -95,8 +95,12 @@ describe('Presentation Tests', () => {
     signedVp.proof.jws = 'eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..WKFBoCg4B-eAFROQCNtreY6WNz2WDjGjRl2M9nmSLwmIVnHyamYQ7ulh3FB6_l51uhC_RP19aGEk4LrPqGB0Cw';
 
     // signedVp.verifiableCredential[0].credentialSubject.id = '123';
+    signedVp.verifiableCredential[0].credentialSubject.other = '123';
+    // signedVp.verifiableCredential[0].claim.a = '123';
+    signedVp.verifiableCredential[0].proof.merkleRoot = '123';
     const verified = await presentation.verify(signedVp, documentLoader);
 
-    expect(verified).toEqual(false);
+    expect(verified)
+      .toEqual(false);
   });
 });

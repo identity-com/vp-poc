@@ -4,6 +4,7 @@ export default {
     '@protected': true,
     id: '@id',
     type: '@type',
+    xsd: 'http://www.w3.org/2001/XMLSchema#',
     IdentityCredential: {
       '@id': 'https://www.identity.com/credentials/v1#identityCredential',
       '@context': {
@@ -11,32 +12,34 @@ export default {
         '@protected': true,
         id: '@id',
         type: '@type',
+        cvc: 'https://www.identity.com/credentials/v1#',
         meta: {
           '@id': 'cvc:meta',
           '@type': '@json',
-          '@container': '@graph',
         },
-        cvc: 'https://www.identity.com/credentials/v1#',
         identifier: {
           '@id': 'cvc:identifier',
-          '@type': '@id',
+          '@type': 'xsd:string',
         },
         version: {
           '@id': 'cvc:version',
-          '@type': '@id',
+          '@type': 'xsd:decimal',
         },
         granted: {
           '@id': 'cvc:granted',
-          '@type': '@id',
+          '@type': 'xsd:string',
         },
         transient: {
           '@id': 'cvc:transient',
-          '@type': '@id',
+          '@type': 'xsd:boolean',
         },
         claim: {
           '@id': 'cvc:claim',
           '@type': '@json',
-          '@container': '@graph',
+        },
+        contact: {
+          '@id': 'cvc:claim',
+          '@type': '@json',
         },
       },
     },
@@ -50,22 +53,19 @@ export default {
         cvc: 'https://www.identity.com/credentials/v1#',
         merkleRoot: {
           '@id': 'cvc:merkleRoot',
-          '@type': '@id',
+          '@type': 'xsd:string',
         },
         merkleRootSignature: {
           '@id': 'cvc:merkleRootSignature',
           '@type': '@json',
-          '@container': '@graph',
         },
         anchor: {
           '@id': 'cvc:anchor',
           '@type': '@json',
-          '@container': '@graph',
         },
         leaves: {
           '@id': 'cvc:leaves',
           '@type': '@json',
-          '@container': '@graph',
         },
       },
     },

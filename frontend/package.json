@@ -9,7 +9,8 @@
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
     "audit-ci": "audit-ci --config audit-ci.json",
-    "deploy:s3": "yarn build && STAGE=${STAGE:-prod} etc/deploy/deploy-site.sh"
+    "predeploy": "yarn build",
+    "deploy": "STAGE=${STAGE:-dev} etc/deploy/deploy-site.sh"
   },
   "dependencies": {
     "@digitalbazaar/vc": "^1.0.0",

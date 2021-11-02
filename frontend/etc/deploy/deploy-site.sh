@@ -3,7 +3,7 @@ set -e
 set -u
 
 if [ "${STAGE}" == "prod" ]; then
-  DISTRIBUTION=???
+  DISTRIBUTION=E11UO6TBB0T7KQ
   BUCKET=vp-demo.identity.com
 fi
 

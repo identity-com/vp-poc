@@ -39,8 +39,5 @@ jobs:
       - name: Lint
         run: yarn workspace vp-poc run lint
 
-      - name: Test
-        run: yarn workspace vp-poc run test:unit
-
       - name: Build
         run: yarn workspace vp-poc run build

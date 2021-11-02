@@ -32,7 +32,7 @@ describe('credential verifiation checks', () => {
 
     const promises = revertedCredentials.map(async (credential) => {
       const vc = await VC.fromJSON(credential);
-      return VC.nonCryptographicallySecureVerify(credential);
+      return VC.nonCryptographicallySecureVerify(vc);
     });
 
     const result = await Promise.all(promises);
@@ -51,14 +51,14 @@ describe('credential verifiation checks', () => {
             name: 'acme',
             tld: 'com',
           },
-          username: 'wilecoyote',
+          username: 'wile.coyote',
         },
       },
     };
 
     const promises = revertedCredentials.map(async (credential) => {
       const vc = await VC.fromJSON(credential);
-      return VC.nonCryptographicallySecureVerify(credential);
+      return VC.nonCryptographicallySecureVerify(vc);
     });
 
     const result = await Promise.all(promises);

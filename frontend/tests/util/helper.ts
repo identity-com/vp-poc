@@ -1,6 +1,6 @@
 import { Connection, PublicKey } from '@solana/web3.js';
 
-const AIRDROP_LAMPORTS = 20_000_000;
+export const AIRDROP_LAMPORTS = 20_000_000;
 export const airdrop = async (
   connection: Connection,
   publicKey: PublicKey,

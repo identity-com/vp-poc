@@ -116,21 +116,19 @@ export const convert = (
   // eslint-disable-next-line no-param-reassign
   credential.credentialSubject = {
     id: subject,
+    type: 'IdentityCredential',
   };
-
-  // eslint-disable-next-line no-param-reassign
-  credential.meta = {
-    issuanceDate: credential.issuanceDate,
-  };
+  // eslint-disable-next-line guard-for-in,no-restricted-syntax
+  for (const key in credential.claim) {
+    // eslint-disable-next-line no-param-reassign
+    credential.credentialSubject[key] = credential.claim[key];
+  }
 
   // eslint-disable-next-line no-param-reassign
   credential.type = [
     'VerifiableCredential',
     'IdentityCredential',
   ];
-
-  // eslint-disable-next-line no-param-reassign
-  credential.issuanceDate = credential.issuanceDate.replace(/\.\d+Z/, 'Z');
 
   // eslint-disable-next-line no-restricted-syntax
   for (const prop in credential) {
@@ -140,15 +138,38 @@ export const convert = (
     }
   }
 
-  return credential;
+  // eslint-disable-next-line no-param-reassign
+  delete credential.claim;
+
+  return {
+    '@context': credential['@context'],
+    id: credential.id,
+    identifier: credential.identifier,
+    version: credential.version,
+    type: credential.type,
+    issuer: credential.issuer,
+    issuanceDate: credential.issuanceDate,
+    credentialSubject: credential.credentialSubject,
+    transient: credential.transient,
+    granted: credential.granted,
+    proof: credential.proof,
+  };
 });
 
 export const revert = (credentials: any[]) => credentials.map((credential: any) => {
   // eslint-disable-next-line no-param-reassign
-  credential.issuanceDate = credential.meta.issuanceDate;
+  credential.type = ['Credential', credential.identifier];
 
   // eslint-disable-next-line no-param-reassign
-  credential.type = ['Credential', credential.identifier];
+  credential.claim = {};
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const key in credential.credentialSubject) {
+    if (!['id', 'type'].includes(key)) {
+      // eslint-disable-next-line no-param-reassign
+      credential.claim[key] = credential.credentialSubject[key];
+    }
+  }
 
   // eslint-disable-next-line no-param-reassign
   delete credential['@context'];

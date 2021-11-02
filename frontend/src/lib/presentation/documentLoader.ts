@@ -3,22 +3,14 @@ import sec from '@transmute/security-context';
 import didContext from '@transmute/did-context';
 
 import { JsonWebKey } from '@transmute/json-web-signature';
-import vc from '@digitalbazaar/vc';
 import { resolve } from '@identity.com/sol-did-client';
 import { Ed25519VerificationKey2018 } from '@transmute/ed25519-key-pair';
+
 import credentialContext from './credentialContext';
 
-const { defaultDocumentLoader } = vc;
-
-const contexts: any = {
+export const contexts: any = {
   [sec.constants.JSON_WEB_SIGNATURE_2020_V1_URL]: sec.contexts.get(
     sec.constants.JSON_WEB_SIGNATURE_2020_V1_URL,
-  ),
-  [sec.constants.ED25519_2020_V1_URL]: sec.contexts.get(
-    sec.constants.ED25519_2020_V1_URL,
-  ),
-  [sec.constants.ED25519_2018_v1_URL]: sec.contexts.get(
-    sec.constants.ED25519_2018_v1_URL,
   ),
   [cre.constants.CREDENTIALS_CONTEXT_V1_URL]: cre.contexts.get(
     cre.constants.CREDENTIALS_CONTEXT_V1_URL,
@@ -83,5 +75,5 @@ export default async (iri: string): Promise<{ document: any }> => {
     return { document: contexts[iri] };
   }
 
-  return defaultDocumentLoader(iri);
+  throw new Error(`Invalid iri: ${iri}`);
 };

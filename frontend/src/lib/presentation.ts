@@ -119,7 +119,19 @@ export const verify = async (
     .presentation.verify({
       presentation: vp,
       format: ['vp'],
-      documentLoader,
+      documentLoader: async (
+        iri: string | undefined,
+      ): Promise<{ documentUrl?: string; document: any }> => {
+        if (!iri) {
+          return { document: undefined };
+        }
+
+        if (vp.proof.verificationMethod.startsWith(iri) && vp.proof.verificationMethod !== iri) {
+          return documentLoader(vp.proof.verificationMethod);
+        }
+
+        return documentLoader(iri);
+      },
       challenge: vp.proof.challenge,
       suite: new JsonWebSignature({}),
     });

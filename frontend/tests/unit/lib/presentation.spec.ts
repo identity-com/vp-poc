@@ -4,6 +4,8 @@ import credentials from './fixtures/credentials.json';
 import { createJwkFromBs58 } from '@/lib/keyUtil';
 import defaultDocumentLoader from '@/lib/presentation/documentLoader';
 import didcontroller from './fixtures/didcontroller.json';
+import didcontrollerAlt from './fixtures/didcontroller-alt.json';
+import vpAlternative from './fixtures/vp-alternative.json';
 
 const did = 'did:sol:devnet:3emPMNueBjcnLxpxJLrakNjBHyXZdZ1djdgqUvYNwpXF';
 const keyBs58 = '22jH4D3nP2aELBvEMFHYd16MQNACy3zSKJTNj3aM2ic8nbkT9KEYEFMcg5XXr39KNe8GMFYefVAyfvEGLniZ884u';
@@ -13,9 +15,15 @@ let jwk: JsonWebKey;
 
 // document loader to prevent reliance on solana node
 const documentLoader = async (iri: string) => {
-  if (iri.startsWith('did:sol')) {
+  if (iri.startsWith('did:sol:devnet:3emPMNueBjcnLxpxJLrakNjBHyXZdZ1djdgqUvYNwpXF')) {
     return {
       document: didcontroller,
+    };
+  }
+
+  if (iri.startsWith('did:sol:devnet:E9yXcjNZiVRzcEhzNkUHAvrrbmkJnfXRd8Q7eHnirihb')) {
+    return {
+      document: didcontrollerAlt,
     };
   }
 
@@ -38,9 +46,9 @@ describe('Presentation Tests', () => {
           verifiableCredential: expect.arrayContaining([
             expect.objectContaining({
               type: ['VerifiableCredential', 'IdentityCredential'],
-              credentialSubject: {
+              credentialSubject: expect.objectContaining({
                 id: did,
-              },
+              }),
             }),
           ]),
         }),
@@ -56,13 +64,13 @@ describe('Presentation Tests', () => {
       .toEqual(
         expect.objectContaining({
           type: ['VerifiablePresentation'],
-          holder: { id: `${did}#default` },
+          holder: { id: `${did}` },
           verifiableCredential: expect.arrayContaining([
             expect.objectContaining({
               type: ['VerifiableCredential', 'IdentityCredential'],
-              credentialSubject: {
+              credentialSubject: expect.objectContaining({
                 id: did,
-              },
+              }),
             }),
           ]),
           proof: expect.objectContaining({
@@ -81,22 +89,34 @@ describe('Presentation Tests', () => {
 
     const signedVp = await presentation.sign(jwk, vp);
 
-    const verified = await presentation.verify(signedVp);
+    const verified = await presentation.verify(signedVp, documentLoader);
 
     expect(verified)
       .toEqual(true);
   });
 
-  it.only('fails to verify a tampered signed verifiable presentation', async () => {
+  it('fails to verify a tampered signed verifiable presentation', async () => {
     const vp = createPresentation();
-
     const signedVp = await presentation.sign(jwk, vp);
+    signedVp.verifiableCredential[0].credentialSubject.contact = {
+      email: {
+        domain: {
+          name: 'acme',
+          tld: 'com',
+        },
+        username: 'wile.coyote',
+      },
+    };
 
-    // signedVp.proof.jws = 'eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..WKFBoCg4B-eAFROQCNtreY6WNz2WDjGjRl2M9nmSLwmIVnHyamYQ7ulh3FB6_l51uhC_RP19aGEk4LrPqGB0Cw';
-
-    signedVp.verifiableCredential[0].credentialSubject.id = '123';
     const verified = await presentation.verify(signedVp, documentLoader);
 
-    expect(verified).toEqual(false);
+    expect(verified)
+      .toEqual(false);
+  });
+
+  it('verifies a presentation with an alternative key', async () => {
+    const verified = await presentation.verify(vpAlternative, documentLoader);
+
+    expect(verified).toEqual(true);
   });
 });

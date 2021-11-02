@@ -4,6 +4,7 @@ import credentials from './fixtures/credentials.json';
 import { createJwkFromBs58 } from '@/lib/keyUtil';
 import defaultDocumentLoader from '@/lib/presentation/documentLoader';
 import didcontroller from './fixtures/didcontroller.json';
+import didcontrollerAlt from './fixtures/didcontroller-alt.json';
 import vpAlternative from './fixtures/vp-alternative.json';
 
 const did = 'did:sol:devnet:3emPMNueBjcnLxpxJLrakNjBHyXZdZ1djdgqUvYNwpXF';
@@ -14,9 +15,15 @@ let jwk: JsonWebKey;
 
 // document loader to prevent reliance on solana node
 const documentLoader = async (iri: string) => {
-  if (iri.startsWith('did:sol')) {
+  if (iri.startsWith('did:sol:devnet:3emPMNueBjcnLxpxJLrakNjBHyXZdZ1djdgqUvYNwpXF')) {
     return {
       document: didcontroller,
+    };
+  }
+
+  if (iri.startsWith('did:sol:devnet:E9yXcjNZiVRzcEhzNkUHAvrrbmkJnfXRd8Q7eHnirihb')) {
+    return {
+      document: didcontrollerAlt,
     };
   }
 
@@ -108,7 +115,7 @@ describe('Presentation Tests', () => {
   });
 
   it('verifies a presentation with an alternative key', async () => {
-    const verified = await presentation.verify(vpAlternative);
+    const verified = await presentation.verify(vpAlternative, documentLoader);
 
     expect(verified).toEqual(true);
   });
